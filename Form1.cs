@@ -47,17 +47,17 @@ namespace WindowsFormsApp1
             return System.Convert.ToBase64String(plainTextBytes);
         }
 
-        class VisionResponse
+        private class VisionResponse
         {
             public class FullTextAnnotation
             {
-                public List<object> pages;
+                public List<object> pages;              // don't care
                 public string text;
             }
 
             public class Response
             {
-                public List<object> textAnnotations;
+                public List<object> textAnnotations;    // don't care
                 public FullTextAnnotation FullTextAnnotation;
             }
 
@@ -86,30 +86,32 @@ namespace WindowsFormsApp1
                 return;
             }
 
+            Console.WriteLine("Got response");
             var text = res.responses[0].FullTextAnnotation.text;
             var split = text.Split('\n');
             _cardTitleText.Text = TrimMana(split[0]);
+
+            // TODO: fill other text fields with date from response
         }
 
-        string TrimMana(string title)
+        private static string TrimMana(string title)
         {
             return title.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ' ');
         }
 
         async Task<string> PostAsync(string base64Content)
         {
+            // hacky, but it works
             var json = @"
             {
              ""requests"": [
               {
                 ""image"": {
-                    ""source"": {
-                    },
-                ""content"": ""$CONTENT""
+                  ""content"": ""$CONTENT""
                 },
-               ""features"": [
+                ""features"": [
                 {
-                 ""type"": ""TEXT_DETECTION""
+                  ""type"": ""TEXT_DETECTION""
                 }
                ]
               }
@@ -122,7 +124,7 @@ namespace WindowsFormsApp1
             {
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 var response = await client.PostAsync(baseUrl, content);
-                Console.WriteLine($"Sending {content}");
+                Console.WriteLine($"Sending request {content.Headers}");
                 return await response.Content.ReadAsStringAsync();
             }
         }
