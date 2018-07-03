@@ -40,5 +40,13 @@ Some cross-referencing will be required to map a side-board to a deck, but this 
 
 ## Google Vision API
 
-The app relies on the (Google Vision)[https://cloud.google.com/vision/]
+The app relies on the [Google Vision](https://cloud.google.com/vision/) API. 
+
+Using this is free for a while, then it costs money. Using it requires a private key.
+
+You will need to make your own Private key and deal with any other Auth issues yourself.
+
+The program will read a file called 'GoogleVisionAPIKey.txt' to retrieve the private key. This file is not part of the git repo.
+
+
 
