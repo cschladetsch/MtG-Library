@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.webCameraControl1 = new WebEye.Controls.WinForms.WebCameraControl.WebCameraControl();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -36,6 +37,9 @@
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.inventoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.allToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.byColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deckToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.writeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -44,6 +48,7 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -55,7 +60,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -67,18 +71,19 @@
             this.webCameraControl1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.webCameraControl1.Location = new System.Drawing.Point(15, 19);
             this.webCameraControl1.Name = "webCameraControl1";
-            this.webCameraControl1.Size = new System.Drawing.Size(240, 320);
+            this.webCameraControl1.Size = new System.Drawing.Size(320, 240);
             this.webCameraControl1.TabIndex = 0;
             //
             // menuStrip1
             //
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
+            this.inventoryToolStripMenuItem,
             this.deckToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(656, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(690, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             //
@@ -125,6 +130,27 @@
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
             //
+            // inventoryToolStripMenuItem
+            //
+            this.inventoryToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.allToolStripMenuItem,
+            this.byColorToolStripMenuItem});
+            this.inventoryToolStripMenuItem.Name = "inventoryToolStripMenuItem";
+            this.inventoryToolStripMenuItem.Size = new System.Drawing.Size(69, 20);
+            this.inventoryToolStripMenuItem.Text = "&Inventory";
+            //
+            // allToolStripMenuItem
+            //
+            this.allToolStripMenuItem.Name = "allToolStripMenuItem";
+            this.allToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+            this.allToolStripMenuItem.Text = "&All";
+            //
+            // byColorToolStripMenuItem
+            //
+            this.byColorToolStripMenuItem.Name = "byColorToolStripMenuItem";
+            this.byColorToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+            this.byColorToolStripMenuItem.Text = "By Color...";
+            //
             // deckToolStripMenuItem
             //
             this.deckToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -147,6 +173,7 @@
             this.writeToolStripMenuItem.Name = "writeToolStripMenuItem";
             this.writeToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.writeToolStripMenuItem.Text = "&Write";
+            this.writeToolStripMenuItem.Click += new System.EventHandler(this.writeToolStripMenuItem_Click);
             //
             // exportToolStripMenuItem
             //
@@ -176,19 +203,27 @@
             //
             // groupBox1
             //
+            this.groupBox1.Controls.Add(this.progressBar1);
             this.groupBox1.Controls.Add(this.button2);
             this.groupBox1.Controls.Add(this.button1);
             this.groupBox1.Controls.Add(this.webCameraControl1);
             this.groupBox1.Location = new System.Drawing.Point(12, 34);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(273, 377);
+            this.groupBox1.Size = new System.Drawing.Size(350, 331);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Cam View";
+            this.groupBox1.Text = "Camera View";
+            //
+            // progressBar1
+            //
+            this.progressBar1.Location = new System.Drawing.Point(18, 294);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(320, 23);
+            this.progressBar1.TabIndex = 3;
             //
             // button2
             //
-            this.button2.Location = new System.Drawing.Point(180, 345);
+            this.button2.Location = new System.Drawing.Point(260, 265);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 2;
@@ -197,11 +232,11 @@
             //
             // button1
             //
-            this.button1.Location = new System.Drawing.Point(15, 345);
+            this.button1.Location = new System.Drawing.Point(15, 265);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 1;
-            this.button1.Text = "&Take";
+            this.button1.Text = "&Take Photo";
             this.button1.UseVisualStyleBackColor = true;
             //
             // groupBox2
@@ -214,16 +249,16 @@
             this.groupBox2.Controls.Add(this.label3);
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.label1);
-            this.groupBox2.Location = new System.Drawing.Point(302, 34);
+            this.groupBox2.Location = new System.Drawing.Point(381, 34);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(293, 377);
+            this.groupBox2.Size = new System.Drawing.Size(296, 331);
             this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Results";
             //
             // button3
             //
-            this.button3.Location = new System.Drawing.Point(202, 348);
+            this.button3.Location = new System.Drawing.Point(202, 294);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 23);
             this.button3.TabIndex = 8;
@@ -235,7 +270,7 @@
             this._descriptionText.Location = new System.Drawing.Point(79, 109);
             this._descriptionText.Multiline = true;
             this._descriptionText.Name = "_descriptionText";
-            this._descriptionText.Size = new System.Drawing.Size(198, 230);
+            this._descriptionText.Size = new System.Drawing.Size(198, 179);
             this._descriptionText.TabIndex = 7;
             //
             // _typeText
@@ -262,7 +297,7 @@
             // label3
             //
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(18, 87);
+            this.label3.Location = new System.Drawing.Point(20, 85);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(31, 13);
             this.label3.TabIndex = 2;
@@ -280,18 +315,11 @@
             // label1
             //
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(18, 31);
+            this.label1.Location = new System.Drawing.Point(18, 34);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(52, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "Card Title";
-            //
-            // progressBar1
-            //
-            this.progressBar1.Location = new System.Drawing.Point(12, 427);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(487, 23);
-            this.progressBar1.TabIndex = 3;
             //
             // openFileDialog1
             //
@@ -304,11 +332,11 @@
             //
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(656, 470);
-            this.Controls.Add(this.progressBar1);
+            this.ClientSize = new System.Drawing.Size(690, 374);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.menuStrip1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "Form1";
@@ -353,6 +381,9 @@
         private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.ToolStripMenuItem inventoryToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem allToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem byColorToolStripMenuItem;
     }
 }
 
