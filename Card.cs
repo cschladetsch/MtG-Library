@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Mtg
 {
@@ -20,18 +19,6 @@ namespace Mtg
         public string Name;
         public string Text;
         public ERelease Release;
-
-        //private string ScannedToString()
-        //{
-        //    var sb = new StringBuilder();
-        //    var sep = "";
-        //    foreach (var s in ScannedTitle)
-        //    {
-        //        sb.Append($"'{s}{sep}");
-        //        sep = ", ";
-        //    }
-        //    return sb.ToString();
-        //}
 
         public override string ToString()
         {

@@ -28,7 +28,7 @@ namespace Mtg
         /// ApiKeyFileName is just the name of a text file that
         /// contains your private Api key to GoogleVision.
         /// </summary>
-        const string ApiKeyFileName = "GoogleVisonAPIKey.txt";
+        private const string ApiKeyFileName = "GoogleVisonAPIKey.txt";
 
         /// <summary>
         /// The width in pixels to scale to before sending to Google Vision.
@@ -213,6 +213,6 @@ namespace Mtg
         }
 
         private readonly CardLibrary _cards = new CardLibrary();
-        private string _visionApiKey;
+        private readonly string _visionApiKey;
     }
 }

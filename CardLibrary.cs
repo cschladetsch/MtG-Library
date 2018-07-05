@@ -10,7 +10,7 @@ namespace Mtg
     /// <summary>
     /// A collection of cards
     /// </summary>
-    class CardLibrary
+    internal class CardLibrary
     {
         public const string FileName = "Cards.json";
 
@@ -19,10 +19,10 @@ namespace Mtg
         /// There is a set of unique Cards, then a Count for each instance of
         /// a card the library contains.
         /// </summary>
-        class Library
+        private class Library
         {
-            public Dictionary<Guid, Card> Cards = new Dictionary<Guid, Card>();
-            public Dictionary<Guid, int> Counts = new Dictionary<Guid, int>();
+            public readonly Dictionary<Guid, Card> Cards = new Dictionary<Guid, Card>();
+            public readonly Dictionary<Guid, int> Counts = new Dictionary<Guid, int>();
 
             public void Clear()
             {
@@ -55,7 +55,7 @@ namespace Mtg
             {
                 foreach (var kv in _library.Counts)
                 {
-                    for (int n = 0; n < kv.Value; ++n)
+                    for (var n = 0; n < kv.Value; ++n)
                     {
                         yield return _library.Cards[kv.Key];
                     }
@@ -77,8 +77,7 @@ namespace Mtg
                 return 0;
             }
 
-            var text = File.ReadAllText(fileName);
-            _library = JsonConvert.DeserializeObject<Library>(text);
+            _library = JsonConvert.DeserializeObject<Library>(File.ReadAllText(fileName));
             return _library.Counts.Values.Aggregate(0, (a, b) => a + b);
         }
 
@@ -146,6 +145,5 @@ namespace Mtg
         }
 
         private Library _library;
-
     }
 }
