@@ -124,7 +124,6 @@
             this.saveImageToolStripMenuItem.Name = "saveImageToolStripMenuItem";
             this.saveImageToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveImageToolStripMenuItem.Text = "Sa&ve Image";
-            this.saveImageToolStripMenuItem.Click += new System.EventHandler(this.saveImageToolStripMenuItem_Click);
             //
             // settingsToolStripMenuItem
             //
@@ -196,7 +195,6 @@
             this.writeToolStripMenuItem.Name = "writeToolStripMenuItem";
             this.writeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.writeToolStripMenuItem.Text = "&Write";
-            this.writeToolStripMenuItem.Click += new System.EventHandler(this.writeToolStripMenuItem_Click);
             //
             // exportToolStripMenuItem
             //

@@ -21,16 +21,31 @@ namespace Mtg
 {
     public partial class Form1 : Form
     {
-        // you will need to have one of these yourself. It's just a text file that
-        // contains your private Api key to GoogleVision.
+        /// <summary>
+        /// The API Key to use to acccess Google Vision API.
+        ///
+        /// You will need to have one of these yourself.
+        /// ApiKeyFileName is just the name of a text file that
+        /// contains your private Api key to GoogleVision.
+        /// </summary>
         const string ApiKeyFileName = "GoogleVisonAPIKey.txt";
 
         /// <summary>
-        /// The width to scale to for sending to Google Vision.
-        /// Aspect ratio is reserved from original
+        /// The width in pixels to scale to before sending to Google Vision.
+        /// Aspect ratio is reserved from original.
+        ///
+        /// A bit of trial and error shows that this number is a good compromise
+        /// between bandwidth use and OCR precision for MtG cards.
         /// </summary>
-        private const int SentImageWidth = 300;
+        private const int SentImageWidth = 350;
 
+        /// <summary>
+        /// Where to look for recently scanned images for cards.
+        ///
+        /// Note that by default* these images will be deleted after they are processed.
+        ///
+        /// *This doesn't happen yet.
+        /// </summary>
         private readonly string _imageDir = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + "MTG";
 
         public Form1()
@@ -46,18 +61,13 @@ namespace Mtg
             var num = _cards.Load();
             Console.WriteLine($"Read {num} cards from library");
 
-            LoadGoogleVisionApiKey();
+            _visionApiKey = File.ReadAllText(ApiKeyFileName);
         }
 
         protected override void OnClosing(CancelEventArgs e)
         {
             base.OnClosing(e);
             _cards.Save();
-        }
-
-        private void LoadGoogleVisionApiKey()
-        {
-            _visionApiKey = System.IO.File.ReadAllText(ApiKeyFileName);
         }
 
         private void ProcessResponse(VisionResponse res)
@@ -118,10 +128,9 @@ namespace Mtg
             var dest = src.Resize(new Size(width, height));
             var bytes = dest.ToBytes(ext: ".jpg");
             Console.WriteLine($"Converted to {width}x{height}, {bytes.Length} bytes.jpg");
-            dest.ImWrite(fileName + "-short.jpg");
-            var result = await Post(System.Convert.ToBase64String(bytes));
-            var res = JsonConvert.DeserializeObject<VisionResponse>(result);
-            ProcessResponse(res);
+            dest.ImWrite(fileName + "-short.jpg");  // just for comparison with original
+            var result = await Post(Convert.ToBase64String(bytes));
+            ProcessResponse(JsonConvert.DeserializeObject<VisionResponse>(result));
         }
 
         async Task<string> Post(string base64Content)
@@ -148,14 +157,6 @@ namespace Mtg
             // give a large timeout cos we want to add like, 60 cards at a time
             var response = await baseUrl.WithTimeout(TimeSpan.FromMinutes(5)).PostJsonAsync(JsonConvert.DeserializeObject(text));
             return await response.Content.ReadAsStringAsync();
-        }
-
-        private void saveImageToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void writeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
         }
 
         private void Log(string text)
@@ -204,14 +205,14 @@ namespace Mtg
             }
         }
 
-        private readonly CardLibrary _cards = new CardLibrary();
-        private string _visionApiKey;
-
         private void exportToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             if (saveFileDialog1.ShowDialog() != DialogResult.OK)
                 return;
             _cards.Export(saveFileDialog1.FileName);
         }
+
+        private readonly CardLibrary _cards = new CardLibrary();
+        private string _visionApiKey;
     }
 }
