@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.ComponentModel;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Flurl.Http;
+using Mtg;
 using WebEye.Controls.WinForms.WebCameraControl;
 
 using Newtonsoft.Json;
@@ -15,7 +17,7 @@ using OpenCvSharp;
 // Card:    320 x 228 = 1.4 aspect ratio
 // camera:  1280  x 720 = 1.8 aspect ratio
 
-namespace WindowsFormsApp1
+namespace MtgLib
 {
     public partial class Form1 : Form
     {
@@ -23,45 +25,33 @@ namespace WindowsFormsApp1
         // contains your private Api key to GoogleVision.
         const string ApiKeyFileName = "GoogleVisonAPIKey.txt";
 
+        private readonly string _imageDir = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + "MTG";
+
         public Form1()
         {
             InitializeComponent();
             Text = "MtG Card Library";
 
-            List<WebCameraId> cameras = new List<WebCameraId>(webCameraControl1.GetVideoCaptureDevices());
+            var cameras = new List<WebCameraId>(webCameraControl1.GetVideoCaptureDevices());
             webCameraControl1.StartCapture(cameras[0]);
 
-            openFileDialog1.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + "MTG";
+            openFileDialog1.InitialDirectory = _imageDir;
+
+            var num = _cards.Load();
+            Console.WriteLine($"Read {num} cards from library");
 
             LoadGoogleVisionApiKey();
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            base.OnClosing(e);
+            _cards.Save();
         }
 
         private void LoadGoogleVisionApiKey()
         {
             _visionApiKey = System.IO.File.ReadAllText(ApiKeyFileName);
-        }
-
-        public static string Base64Encode(string plainText)
-        {
-            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
-            return System.Convert.ToBase64String(plainTextBytes);
-        }
-
-        private class VisionResponse
-        {
-            public class FullTextAnnotation
-            {
-                public List<object> pages;              // don't care
-                public string text;
-            }
-
-            public class Response
-            {
-                public List<object> textAnnotations;    // don't care
-                public FullTextAnnotation FullTextAnnotation;
-            }
-
-            public List<Response> responses;
         }
 
         private void ProcessResponse(VisionResponse res)
@@ -78,11 +68,11 @@ namespace WindowsFormsApp1
                 return;
             }
 
-            Console.WriteLine("Got response");
             var text = res.responses[0].FullTextAnnotation.text;
             var split = text.Split('\n');
             _cardTitleText.Text = TrimMana(split[0]);
 
+            _cards.Add(res);
             // TODO: fill other text fields with date from response
         }
 
@@ -102,7 +92,8 @@ namespace WindowsFormsApp1
 
         private async void ProcessFile(string fileName)
         {
-            var src = new OpenCvSharp.Mat(fileName, ImreadModes.GrayScale);
+            Console.WriteLine($"Processing file {fileName}");
+            var src = new Mat(fileName);//, ImreadModes.GrayScale);
             var width = (float)src.Width;
             var height = (float)src.Height;
             var aspect = width / height;
@@ -110,6 +101,7 @@ namespace WindowsFormsApp1
             height = width/aspect;
             var dest = src.Resize(new Size(width, height));
             var bytes = dest.ToBytes(ext: ".jpg");
+            Console.WriteLine($"Converted to {width}x{height}, {bytes.Length} bytes.jpg");
             var result = await Post(System.Convert.ToBase64String(bytes));
             var res = JsonConvert.DeserializeObject<VisionResponse>(result);
             ProcessResponse(res);
@@ -148,7 +140,43 @@ namespace WindowsFormsApp1
         {
         }
 
-        // you will need to have one of these yourself
+        private void batchConvertToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ProcessFiles(Directory.GetFiles(@"C:\Users\christian\Pictures\MTG"));
+
+            //using (var fbd = new FolderBrowserDialog())
+            //{
+            //    fbd.SelectedPath = _imageDir;
+            //    var result = fbd.ShowDialog();
+            //    if (result != DialogResult.OK || string.IsNullOrWhiteSpace(fbd.SelectedPath))
+            //        return;
+
+            //    ProcessFiles(Directory.GetFiles(fbd.SelectedPath));
+            //}
+        }
+
+        void ProcessFiles(IEnumerable<string> fileNames)
+        {
+            foreach (var file in fileNames)
+            {
+                ProcessFile(file);
+            }
+        }
+
+        private void resetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _cards.Clear();
+        }
+
+        private void allToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (var card in _cards.Cards)
+            {
+                Console.WriteLine($"Title={card.Title}, scanned={card.ScannedTitle}, text={card.Text}");
+            }
+        }
+
+        private readonly CardLibrary _cards = new CardLibrary();
         private string _visionApiKey;
     }
 }

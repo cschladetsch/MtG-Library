@@ -1,4 +1,4 @@
-﻿namespace WindowsFormsApp1
+﻿namespace MtgLib
 {
     partial class Form1
     {
@@ -33,6 +33,7 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.batchConvertToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -40,6 +41,7 @@
             this.inventoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.allToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.byColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.resetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deckToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.writeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -61,6 +63,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -91,6 +94,7 @@
             //
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openImageToolStripMenuItem,
+            this.batchConvertToolStripMenuItem,
             this.saveImageToolStripMenuItem,
             this.settingsToolStripMenuItem,
             this.toolStripSeparator1,
@@ -102,39 +106,47 @@
             // openImageToolStripMenuItem
             //
             this.openImageToolStripMenuItem.Name = "openImageToolStripMenuItem";
-            this.openImageToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.openImageToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.openImageToolStripMenuItem.Text = "&Open Image...";
             this.openImageToolStripMenuItem.Click += new System.EventHandler(this.openImageToolStripMenuItem_ClickAsync);
+            //
+            // batchConvertToolStripMenuItem
+            //
+            this.batchConvertToolStripMenuItem.Name = "batchConvertToolStripMenuItem";
+            this.batchConvertToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.batchConvertToolStripMenuItem.Text = "&Batch Convert...";
+            this.batchConvertToolStripMenuItem.Click += new System.EventHandler(this.batchConvertToolStripMenuItem_Click);
             //
             // saveImageToolStripMenuItem
             //
             this.saveImageToolStripMenuItem.Name = "saveImageToolStripMenuItem";
-            this.saveImageToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.saveImageToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.saveImageToolStripMenuItem.Text = "Sa&ve Image";
             this.saveImageToolStripMenuItem.Click += new System.EventHandler(this.saveImageToolStripMenuItem_Click);
             //
             // settingsToolStripMenuItem
             //
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.settingsToolStripMenuItem.Text = "&Settings...";
             //
             // toolStripSeparator1
             //
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(145, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(155, 6);
             //
             // exitToolStripMenuItem
             //
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
             //
             // inventoryToolStripMenuItem
             //
             this.inventoryToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.allToolStripMenuItem,
-            this.byColorToolStripMenuItem});
+            this.byColorToolStripMenuItem,
+            this.resetToolStripMenuItem});
             this.inventoryToolStripMenuItem.Name = "inventoryToolStripMenuItem";
             this.inventoryToolStripMenuItem.Size = new System.Drawing.Size(69, 20);
             this.inventoryToolStripMenuItem.Text = "&Inventory";
@@ -142,14 +154,22 @@
             // allToolStripMenuItem
             //
             this.allToolStripMenuItem.Name = "allToolStripMenuItem";
-            this.allToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+            this.allToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.allToolStripMenuItem.Text = "&All";
+            this.allToolStripMenuItem.Click += new System.EventHandler(this.allToolStripMenuItem_Click);
             //
             // byColorToolStripMenuItem
             //
             this.byColorToolStripMenuItem.Name = "byColorToolStripMenuItem";
-            this.byColorToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+            this.byColorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.byColorToolStripMenuItem.Text = "By Color...";
+            //
+            // resetToolStripMenuItem
+            //
+            this.resetToolStripMenuItem.Name = "resetToolStripMenuItem";
+            this.resetToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.resetToolStripMenuItem.Text = "&Reset";
+            this.resetToolStripMenuItem.Click += new System.EventHandler(this.resetToolStripMenuItem_Click);
             //
             // deckToolStripMenuItem
             //
@@ -328,6 +348,11 @@
             this.openFileDialog1.ReadOnlyChecked = true;
             this.openFileDialog1.Title = "Open Card Image";
             //
+            // openFileDialog2
+            //
+            this.openFileDialog2.FileName = "openFileDialog2";
+            this.openFileDialog2.Title = "Select Image Folder";
+            //
             // Form1
             //
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -384,6 +409,9 @@
         private System.Windows.Forms.ToolStripMenuItem inventoryToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem allToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem byColorToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem batchConvertToolStripMenuItem;
+        private System.Windows.Forms.OpenFileDialog openFileDialog2;
+        private System.Windows.Forms.ToolStripMenuItem resetToolStripMenuItem;
     }
 }
 

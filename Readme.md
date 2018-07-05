@@ -1,6 +1,8 @@
 # MtG Library Helper
 
-This project intends to assist with the automation of generating deck descriptions for Magic the Gathering (MtG) trading card game.
+[TOC]
+
+This project intends to assist with the automation of generating deck descriptions for **Magic the Gathering** (MtG) trading card game.
 
 ## Creating an Inventory
 
@@ -47,6 +49,4 @@ Using this is free for a while, then it costs money. Using it requires a private
 You will need to make your own Private key and deal with any other Auth issues yourself.
 
 The program will read a file called 'GoogleVisionAPIKey.txt' to retrieve the private key. This file is not part of the git repo.
-
-
 
