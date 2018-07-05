@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace MtgLib
+namespace Mtg
 {
     /// <summary>
     /// What comes back from GoogleVision API call

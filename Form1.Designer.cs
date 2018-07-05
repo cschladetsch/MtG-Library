@@ -1,4 +1,4 @@
-﻿namespace MtgLib
+﻿namespace Mtg
 {
     partial class Form1
     {

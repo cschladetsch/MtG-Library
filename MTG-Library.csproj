@@ -7,7 +7,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{AFB8E6E4-E65E-4A47-854F-8327CDA33BBC}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>MtgLib</RootNamespace>
+    <RootNamespace>Mtg</RootNamespace>
     <AssemblyName>WindowsFormsApp1</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
