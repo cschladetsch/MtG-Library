@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System.Text;
 using MtgLib;
 using Newtonsoft.Json;
 
@@ -122,5 +123,28 @@ namespace Mtg
         }
 
         private Library _library;
+
+        public void Export(string fileName)
+        {
+            var ext = Path.GetExtension(fileName);
+            switch (ext)
+            {
+                case ".tappedout":
+                    ExportTappedOut(fileName);
+                    break;
+            }
+        }
+
+        private void ExportTappedOut(string fileName)
+        {
+            var sb = new StringBuilder();
+            foreach (var c in _library.Counts)
+            {
+                var entry = $"{c.Value}x {_library.Cards[c.Key].Title}";
+                sb.AppendLine(entry);
+            }
+
+            File.WriteAllText(fileName, sb.ToString());
+        }
     }
 }

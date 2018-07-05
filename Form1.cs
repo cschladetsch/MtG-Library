@@ -178,5 +178,12 @@ namespace MtgLib
 
         private readonly CardLibrary _cards = new CardLibrary();
         private string _visionApiKey;
+
+        private void exportToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (saveFileDialog1.ShowDialog() != DialogResult.OK)
+                return;
+            _cards.Export(saveFileDialog1.FileName);
+        }
     }
 }
