@@ -51,6 +51,7 @@ namespace Mtg
         public Form1()
         {
             InitializeComponent();
+
             Text = "MtG Card Library";
 
             var cameras = new List<WebCameraId>(webCameraControl1.GetVideoCaptureDevices());
@@ -58,10 +59,15 @@ namespace Mtg
 
             openFileDialog1.InitialDirectory = _imageDir;
 
-            var num = _cards.Load();
-            Console.WriteLine($"Read {num} cards from library");
-
             _visionApiKey = File.ReadAllText(ApiKeyFileName);
+
+            LoadCards();
+        }
+
+        private async Task LoadCards()
+        {
+            var num = await _cards.Load();
+            Console.WriteLine($"Read {num} cards from library");
         }
 
         protected override void OnClosing(CancelEventArgs e)
@@ -155,7 +161,8 @@ namespace Mtg
             var baseUrl  = "https://vision.googleapis.com/v1/images:annotate?fields=responses&key=" + _visionApiKey;
 
             // give a large timeout cos we want to add like, 60 cards at a time
-            var response = await baseUrl.WithTimeout(TimeSpan.FromMinutes(5)).PostJsonAsync(JsonConvert.DeserializeObject(text));
+            var response = await baseUrl.WithTimeout(TimeSpan.FromMinutes(5))
+                .PostJsonAsync(JsonConvert.DeserializeObject(text));
             return await response.Content.ReadAsStringAsync();
         }
 
@@ -168,7 +175,7 @@ namespace Mtg
         {
             Log("Batch Convert Started");
             //Task.Run(() => ProcessFiles(Directory.GetFiles(@"C:\Users\christian\Pictures\MTG")));
-            await ProcessFiles(Directory.GetFiles(@"C:\Users\christian\Pictures\MTG"));
+            await ProcessFiles(Directory.GetFiles(@"C:\Users\christian\Pictures\MTG\BlueWhiteDeck"));
             Log("Batch Convert End");
 
             //using (var fbd = new FolderBrowserDialog())
@@ -210,6 +217,18 @@ namespace Mtg
             if (saveFileDialog1.ShowDialog() != DialogResult.OK)
                 return;
             _cards.Export(saveFileDialog1.FileName);
+        }
+
+        private void inventoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+        }
+
+        private async void getLatestCardListToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (await _cards.GetAllCardNames())
+                MessageBox.Show($"Retrieved {_cards.AllExisitingCardnames.Count()} card names");
+            else
+                MessageBox.Show("Failed to get card names", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         private readonly CardLibrary _cards = new CardLibrary();

@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Flurl;
+using Flurl.Http;
+
 
 namespace Mtg
 {
@@ -13,6 +17,7 @@ namespace Mtg
     internal class CardLibrary
     {
         public const string FileName = "Cards.json";
+        public const string AllCardsFileName = "AllCards.json";
 
         /// <summary>
         /// Internal representation of the library.
@@ -68,15 +73,21 @@ namespace Mtg
             _library.Clear();
         }
 
-        public int Load(string fileName = FileName)
+        public async Task<int> Load(string fileName = FileName)
         {
             if (!File.Exists(fileName))
             {
                 Console.WriteLine("Starting new library");
                 _library = new Library();
-                return 0;
             }
 
+            if (!File.Exists(AllCardsFileName))
+            {
+                Console.WriteLine("Do not have list of all cards; fetching");
+                await GetAllCardNames();
+            }
+
+            _allCardNames = JsonConvert.DeserializeObject<AllCardNames>(File.ReadAllText(AllCardsFileName));
             _library = JsonConvert.DeserializeObject<Library>(File.ReadAllText(fileName));
             return _library.Counts.Values.Aggregate(0, (a, b) => a + b);
         }
@@ -92,7 +103,10 @@ namespace Mtg
         {
             var text = res.responses[0].FullTextAnnotation.text;
             var split = text.Split('\n');
-            var title = TrimMana(split[0]);
+            var input = TrimMana(split[0]);
+            var title = ClosestStringMatch.Find(input, _allCardNames.data);
+
+            Console.WriteLine($"Found {title} as best match for {input}");
 
             var card = new Card()
             {
@@ -144,6 +158,37 @@ namespace Mtg
             File.WriteAllText(fileName, sb.ToString());
         }
 
+        private string Endpoint = "https://api.scryfall.com";
+
+        class AllCardNames
+        {
+            public string @object;
+            public string uri;
+            public int total_values;
+            public List<string> data;
+        }
+
+        public IEnumerable<string> AllExisitingCardnames => _allCardNames?.data;
+
+        public async Task<bool> GetAllCardNames()
+        {
+            try
+            {
+                _allCardNames = await Endpoint.AppendPathSegment("catalog/card-names")
+                    .SetQueryParam("format", "json")
+                    .GetJsonAsync<AllCardNames>();
+                File.WriteAllText(AllCardsFileName, JsonConvert.SerializeObject(_allCardNames));
+                Console.WriteLine($"Fetched {_allCardNames.data.Count} card names");
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error: {e.Message}");
+                return false;
+            }
+        }
+
         private Library _library;
+        private AllCardNames _allCardNames;
     }
 }

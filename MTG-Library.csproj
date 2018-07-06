@@ -78,6 +78,7 @@
   <ItemGroup>
     <Compile Include="Card.cs" />
     <Compile Include="CardLibrary.cs" />
+    <Compile Include="ClosestStringMatch.cs" />
     <Compile Include="Deck.cs" />
     <Compile Include="ECardType.cs" />
     <Compile Include="EManaType.cs" />

@@ -1,9 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+
+using Flurl;
+using Flurl.Http;
 
 namespace Mtg
 {
+    /// <summary>
+    /// Represents a card in your library, or a card you're interested in.
+    /// </summary>
     class Card
     {
         public Guid TypeId;
@@ -43,6 +50,17 @@ namespace Mtg
             return result.Trim();
         }
 
+        private const string Endpoint = "https://api.scryfall.com";
+
+        public async Task<bool> PullInfo(Guid id)
+        {
+            return false;
+        }
+
+        public async Task<bool> PullInfo()
+        {
+            return false;
+        }
         private string _title;
     }
 }
