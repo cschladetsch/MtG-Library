@@ -1,11 +1,11 @@
 GoogleVisonAPIKey.txt
 
 /.vs/
-/bin
-/obj
-/[Dd]ebug
+bin/
+obj/
+[Dd]ebug/
 
-/packages
+packages
 
 *.suo
 *.tmp

@@ -1,13 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Mtg
 {
     public static class ClosestStringMatch
     {
+        public static string UpperCaseWords(string n)
+        {
+            var split = n.Split(' ');
+            var result = "";
+            foreach (var word in split)
+            {
+                var c = word[0];
+                if (char.IsWhiteSpace(c))
+                {
+                    result += c;
+                    continue;
+                }
+                var f = char.ToUpper(c);
+                result += f + word.Substring(1) + ' ';
+            }
+            return result.Trim();
+        }
+
         public static string Find(string input, IList<string> options)
         {
             if (options == null || options.Count == 0)
