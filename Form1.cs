@@ -40,16 +40,36 @@ namespace Mtg
             tabControl1.Selected += TabControl1OnSelected;
 
             LoadCards();
+
+            // quick hack to sort by card cost
+            listViewLibrary_ColumnClick(this, new ColumnClickEventArgs(1));
+            listViewLibrary_ColumnClick(this, new ColumnClickEventArgs(1));
+
+            // select most expensive item by default
+            var highest = 0.0f;
+            var items = listViewLibrary.Items;
+            foreach (ListViewItem item in items)
+            {
+                var cost = float.Parse(_cards.Get((Guid) item.Tag).ScryfallCard.usd);
+                if (cost > highest)
+                {
+                    item.Selected = true;
+                    highest = cost;
+                }
+            }
         }
 
         // invoked when tab control changes current tab.
         // TODO: refresh data
         private void TabControl1OnSelected(object sender, TabControlEventArgs tabControlEventArgs)
         {
-            //Log($"Selected {tabControlEventArgs.TabPageIndex}");
+            Log($"Selected {tabControlEventArgs.TabPageIndex}");
             switch (tabControlEventArgs.TabPageIndex)
             {
                 case 0:
+                    {
+                        //listViewLibrary_ColumnClick(this, new ColumnClickEventArgs(1));
+                    }
                     break;
                 case 1:
                     break;
@@ -66,17 +86,18 @@ namespace Mtg
         private async Task LoadCardsAsync()
         {
             var num = await _cards.Load();
+            listViewLibrary.Items.Clear();
             Log($"Read {num} cards from library");
 
             foreach (var card in _cards.Cards)
             {
                 // Log($"Adding {card.Title}");
-                listViewLibrary.Items.Add(new ListViewItem
-                {
-                    Text = card.Title,
-                    Tag = card.TypeId,
-                    Name = card.Title
-                });
+                var item = new ListViewItem(card.Title);
+                item.SubItems.Add(card.ScryfallCard.AudText);
+                item.SubItems.Add(card.ScryfallCard.oracle_text);
+                item.Tag = card.TypeId;
+
+                listViewLibrary.Items.Add(item);
             }
         }
 
@@ -169,6 +190,11 @@ namespace Mtg
                 if (items.Count != 1)
                     return null;
                 var item = listViewLibrary.Items[items[0]];
+                if (item?.Tag == null)
+                {
+                    Log($"Bad entry {item}");
+                    return null;
+                }
                 var id = (Guid) item.Tag;
                 if (id != Guid.Empty)
                     return _cards.Get(id);
@@ -180,10 +206,12 @@ namespace Mtg
         private void listViewLibrary_SelectedIndexChanged(object sender, EventArgs e)
         {
             var card = SelectedCard;
+            if (card == null)
+                return;
             textBoxCardInfoName.Text = card.Title;
             textBoxCardText.Text = card.ScryfallCard.oracle_text;
             // TODO: Not hard-code USD -> AUD conversion rate
-            textBoxCardCost.Text = "$" + (float.Parse(card.ScryfallCard.usd) * 1.35f).ToString("F1");
+            //textBoxCardCost.Text = "$" + (float.Parse(card.ScryfallCard.usd) * 1.35f).ToString("F1");
 
             if (!string.IsNullOrEmpty(card.ImageFilename))
                 cardPicture.Image = Image.FromFile(card.ImageFilename);
@@ -200,6 +228,39 @@ namespace Mtg
             Console.WriteLine(text);
         }
 
+        private void listViewLibrary_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            var list = listViewLibrary;
+            if (e.Column != _sortColumn)
+            {
+                _sortColumn = e.Column;
+                list.Sorting = SortOrder.Ascending;
+            }
+            else
+            {
+                list.Sorting = list.Sorting == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
+            }
+
+            list.Sort();
+            list.ListViewItemSorter = new ListViewUtil.Comparer(e.Column, list.Sorting);
+        }
+
+        private void listViewLibrary_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
+        {
+            var b = e.Bounds;
+            b.Height = (int) (b.Height * 0.6f);  // doing things because otherwise the title columns are too tall??!
+            var color = Brushes.LightGray;//column == e.ColumnIndex ? Brushes.LightGray : Brushes.Gray;
+            e.Graphics.FillRectangle(color, b);
+            e.DrawText();
+        }
+
+        private void listViewLibrary_DrawItem(object sender, DrawListViewItemEventArgs e)
+        {
+            e.DrawDefault = true;
+        }
+
         private readonly CardLibrary _cards = new CardLibrary();
+        private int _sortColumn = -1;
+
     }
 }

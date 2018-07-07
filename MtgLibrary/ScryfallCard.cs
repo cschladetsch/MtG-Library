@@ -60,6 +60,8 @@ namespace Mtg
         public Dictionary<string, string> related_uris;
         public Dictionary<string, string> purchase_uris;
 
+        public string AudText => (float.Parse(usd) * 1.33).ToString("C");
+
         public override string ToString()
         {
             return $"{name}";
