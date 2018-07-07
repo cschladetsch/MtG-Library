@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -64,6 +65,11 @@ namespace Mtg
         public void Clear()
         {
             _library.Clear();
+        }
+
+        public Card Get(Guid id)
+        {
+            return _library.Find(id);
         }
 
         public async Task ProcessFileVision(string fileName)
@@ -272,6 +278,7 @@ namespace Mtg
             return true;
         }
 
+        //private Dictionary<Guid, System.Drawing.
         private PersistentLibrary _library;
         private List<Deck> _decks;
         private AllCardNames _allCardNames;

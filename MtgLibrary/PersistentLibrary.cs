@@ -32,6 +32,11 @@ namespace Mtg
             Cards.Add(card.TypeId, card);
         }
 
+        public Card Find(Guid id)
+        {
+            return Cards[id];
+        }
+
         public Card Find(string title)
         {
             return Cards.Values.FirstOrDefault(c => c.Title.ToLower() == title.ToLower());

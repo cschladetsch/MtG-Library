@@ -75,11 +75,16 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.listView2 = new System.Windows.Forms.ListView();
+            this.listViewLibrary = new System.Windows.Forms.ListView();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.textBoxCardCost = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.cardPicture = new System.Windows.Forms.PictureBox();
+            this.textBoxCardText = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.listView3 = new System.Windows.Forms.ListView();
+            this.textBoxCardInfoName = new System.Windows.Forms.TextBox();
+            this.cardInfoName = new System.Windows.Forms.Label();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.progressBar2 = new System.Windows.Forms.ProgressBar();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -100,6 +105,7 @@
             this.tabPage2.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.cardPicture)).BeginInit();
             this.tabPage3.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -479,7 +485,7 @@
             //
             // groupBox5
             //
-            this.groupBox5.Controls.Add(this.listView2);
+            this.groupBox5.Controls.Add(this.listViewLibrary);
             this.groupBox5.Location = new System.Drawing.Point(7, 7);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(324, 356);
@@ -487,49 +493,101 @@
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Cards";
             //
-            // listView2
+            // listViewLibrary
             //
-            this.listView2.Location = new System.Drawing.Point(6, 19);
-            this.listView2.Name = "listView2";
-            this.listView2.Size = new System.Drawing.Size(312, 331);
-            this.listView2.TabIndex = 0;
-            this.listView2.UseCompatibleStateImageBehavior = false;
+            this.listViewLibrary.GridLines = true;
+            this.listViewLibrary.Location = new System.Drawing.Point(6, 19);
+            this.listViewLibrary.Name = "listViewLibrary";
+            this.listViewLibrary.Size = new System.Drawing.Size(312, 331);
+            this.listViewLibrary.TabIndex = 0;
+            this.listViewLibrary.UseCompatibleStateImageBehavior = false;
+            this.listViewLibrary.View = System.Windows.Forms.View.List;
+            this.listViewLibrary.SelectedIndexChanged += new System.EventHandler(this.listViewLibrary_SelectedIndexChanged);
             //
             // groupBox4
             //
-            this.groupBox4.Controls.Add(this.textBox1);
+            this.groupBox4.Controls.Add(this.label6);
+            this.groupBox4.Controls.Add(this.textBoxCardCost);
+            this.groupBox4.Controls.Add(this.label5);
+            this.groupBox4.Controls.Add(this.cardPicture);
+            this.groupBox4.Controls.Add(this.textBoxCardText);
             this.groupBox4.Controls.Add(this.label4);
-            this.groupBox4.Controls.Add(this.listView3);
+            this.groupBox4.Controls.Add(this.textBoxCardInfoName);
+            this.groupBox4.Controls.Add(this.cardInfoName);
             this.groupBox4.Location = new System.Drawing.Point(337, 6);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(200, 357);
             this.groupBox4.TabIndex = 2;
             this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Deck";
+            this.groupBox4.Text = "Info";
             //
-            // textBox1
+            // label6
             //
-            this.textBox1.Location = new System.Drawing.Point(48, 17);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(146, 20);
-            this.textBox1.TabIndex = 2;
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(101, 47);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(26, 13);
+            this.label6.TabIndex = 8;
+            this.label6.Text = "Aud";
+            //
+            // textBoxCardCost
+            //
+            this.textBoxCardCost.Location = new System.Drawing.Point(47, 44);
+            this.textBoxCardCost.Name = "textBoxCardCost";
+            this.textBoxCardCost.Size = new System.Drawing.Size(48, 20);
+            this.textBoxCardCost.TabIndex = 7;
+            //
+            // label5
+            //
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(6, 47);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(28, 13);
+            this.label5.TabIndex = 6;
+            this.label5.Text = "Cost";
+            //
+            // cardPicture
+            //
+            this.cardPicture.Location = new System.Drawing.Point(47, 160);
+            this.cardPicture.Name = "cardPicture";
+            this.cardPicture.Size = new System.Drawing.Size(147, 191);
+            this.cardPicture.TabIndex = 5;
+            this.cardPicture.TabStop = false;
+            //
+            // textBoxCardText
+            //
+            this.textBoxCardText.Location = new System.Drawing.Point(48, 73);
+            this.textBoxCardText.Multiline = true;
+            this.textBoxCardText.Name = "textBoxCardText";
+            this.textBoxCardText.ReadOnly = true;
+            this.textBoxCardText.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textBoxCardText.Size = new System.Drawing.Size(146, 81);
+            this.textBoxCardText.TabIndex = 4;
             //
             // label4
             //
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(7, 20);
+            this.label4.Location = new System.Drawing.Point(7, 73);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(35, 13);
-            this.label4.TabIndex = 1;
-            this.label4.Text = "Name";
+            this.label4.Size = new System.Drawing.Size(28, 13);
+            this.label4.TabIndex = 3;
+            this.label4.Text = "Text";
             //
-            // listView3
+            // textBoxCardInfoName
             //
-            this.listView3.Location = new System.Drawing.Point(7, 43);
-            this.listView3.Name = "listView3";
-            this.listView3.Size = new System.Drawing.Size(187, 308);
-            this.listView3.TabIndex = 0;
-            this.listView3.UseCompatibleStateImageBehavior = false;
+            this.textBoxCardInfoName.Location = new System.Drawing.Point(48, 17);
+            this.textBoxCardInfoName.Name = "textBoxCardInfoName";
+            this.textBoxCardInfoName.Size = new System.Drawing.Size(146, 20);
+            this.textBoxCardInfoName.TabIndex = 2;
+            //
+            // cardInfoName
+            //
+            this.cardInfoName.AutoSize = true;
+            this.cardInfoName.Location = new System.Drawing.Point(7, 20);
+            this.cardInfoName.Name = "cardInfoName";
+            this.cardInfoName.Size = new System.Drawing.Size(35, 13);
+            this.cardInfoName.TabIndex = 1;
+            this.cardInfoName.Text = "Name";
             //
             // tabPage3
             //
@@ -672,6 +730,7 @@
             this.groupBox5.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.cardPicture)).EndInit();
             this.tabPage3.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
@@ -727,7 +786,7 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.ListView listView2;
+        private System.Windows.Forms.ListView listViewLibrary;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Button button2;
@@ -742,12 +801,17 @@
         private System.Windows.Forms.TabPage tabPage4;
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.GroupBox groupBox5;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.ListView listView3;
+        private System.Windows.Forms.TextBox textBoxCardInfoName;
+        private System.Windows.Forms.Label cardInfoName;
         private System.Windows.Forms.ProgressBar progressBar2;
         private System.Windows.Forms.TabPage tabPage5;
         private System.Windows.Forms.ListView listView4;
+        private System.Windows.Forms.PictureBox cardPicture;
+        private System.Windows.Forms.TextBox textBoxCardText;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox textBoxCardCost;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
     }
 }
 

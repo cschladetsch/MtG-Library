@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 using Flurl;
@@ -22,6 +25,7 @@ namespace Mtg
         public string Text;
         public ERelease Release;
         public ScryfallCard ScryfallCard;
+        public string ImageFilename;
 
         public override string ToString()
         {
@@ -39,6 +43,19 @@ namespace Mtg
                 ScryfallId = result.id;
                 Title = result.name;
                 ScryfallCard = result;
+
+                ScryfallCard.oracle_text = ExpandText(ScryfallCard.oracle_text);
+
+                var imageUri = result.image_uris["small"];
+                var imagePath = result.id.ToString() + "-small.jpg";
+                ImageFilename = imagePath;
+                if (!File.Exists(imagePath))
+                {
+                    var bytes = await imageUri.GetBytesAsync();
+                    File.WriteAllBytes(imagePath, bytes);
+                    Console.WriteLine($"Wrote image for {result.name} to {ImageFilename}");
+                }
+
                 return true;
             }
             catch (Exception e)
@@ -46,6 +63,20 @@ namespace Mtg
                 Console.WriteLine($"Error getting info on {Title}: {e.Message}");
                 return false;
             }
+        }
+
+        string ExpandText(string text)
+        {
+            var replacements = new Dictionary<string, string>()
+            {
+                ["{T}"] = "Tap",
+                ["{W}"] = "Plains",
+                ["{B}"] = "Swamp",
+                ["{R}"] = "Mountain",
+                ["{U}"] = "Island",
+                ["{G}"] = "Forest",
+            };
+            return replacements.Aggregate(text, (current, kv) => current.Replace(kv.Key, kv.Value));
         }
     }
 }

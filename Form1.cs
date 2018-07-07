@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -37,7 +38,7 @@ namespace Mtg
             openFileDialog1.InitialDirectory = _imageDir;
 
             var cameras = new List<WebCameraId>(webCameraControl1.GetVideoCaptureDevices());
-            //webCameraControl1.StartCapture(cameras[0]);
+            webCameraControl1.StartCapture(cameras[0]);
 
             tabControl1.Selected += TabControl1OnSelected;
 
@@ -62,6 +63,16 @@ namespace Mtg
         {
             var num = await _cards.Load();
             Console.WriteLine($"Read {num} cards from library");
+
+            foreach (var card in _cards.Cards)
+            {
+                Console.WriteLine($"Adding {card.Title}");
+                var item = new ListViewItem();
+                item.Text = card.Title;
+                item.Tag = card.TypeId;
+                item.Name = card.Title;
+                listViewLibrary.Items.Add(item);
+            }
         }
 
         protected override void OnClosing(CancelEventArgs e)
@@ -114,13 +125,14 @@ namespace Mtg
             _cards.Export(@"c:\users\christian\desktop\latest.tappedout");
 
             Console.WriteLine($"Batch completed, total of {_cards.Cards.Count()} cards");
-
-            //await _cards.GetAllCardInfos();
+            var pulled = await _cards.PullInfo();
+            Console.WriteLine($"Pulled info={pulled}");
         }
 
         private void resetToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _cards.Clear();
+            listViewLibrary.Items.Clear();
         }
 
         private void allToolStripMenuItem_Click(object sender, EventArgs e)
@@ -153,6 +165,27 @@ namespace Mtg
         private async void updateCardDetailsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             await _cards.PullInfo();
+        }
+
+        private void listViewLibrary_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var items = listViewLibrary.SelectedIndices;
+            if (items.Count == 0)
+                return;
+            var item = listViewLibrary.Items[items[0]];
+            var id = (Guid) item.Tag;
+            if (id == Guid.Empty)
+            {
+                Console.WriteLine($"No id for card {item.Name}");
+                return;
+            }
+            var card = _cards.Get(id);
+            textBoxCardInfoName.Text = card.Title;
+            textBoxCardText.Text = card.ScryfallCard.oracle_text;
+            textBoxCardCost.Text = "$" + (float.Parse(card.ScryfallCard.usd) * 1.35f).ToString("F1");
+
+            if (!string.IsNullOrEmpty(card.ImageFilename))
+                cardPicture.Image = Image.FromFile(card.ImageFilename);
         }
 
         private readonly Mtg.CardLibrary _cards = new CardLibrary();
