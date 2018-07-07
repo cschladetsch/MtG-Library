@@ -10,8 +10,9 @@ using Newtonsoft.Json;
 using Flurl;
 using Flurl.Http;
 
-using Newtonsoft.Json;
 using OpenCvSharp;
+
+#pragma warning disable 649
 
 namespace Mtg
 {
@@ -280,7 +281,7 @@ namespace Mtg
 
         //private Dictionary<Guid, System.Drawing.
         private PersistentLibrary _library;
-        private List<Deck> _decks;
+        //private List<Deck> _decks;
         private AllCardNames _allCardNames;
         private DateTime _lastQuery;
         private readonly string _visionApiKey;

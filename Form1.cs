@@ -1,4 +1,13 @@
-﻿using System;
+﻿// This file, like many WinForms-based apps, has become a bit of a mess.
+// I did have a stab at using custom User Controls for the different TabPages,
+// but it became too unwieldly.
+
+// At least, all the non-UI library is in the separate 'MtgLibrary.dll' assembly.
+
+// Use hard-coded path to images for faster development iteration
+//#define HARD_CODED_IMAGE_PATH
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -6,15 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
 using WebEye.Controls.WinForms.WebCameraControl;
-
-// Cards are: 63 x 88 mm
-// 63/88 = 1.4 aspect ratio
-//
-// Card:        320 x 228 = 1.4 aspect ratio
-// phone cam:   1280 x 720 = 1.8 aspect ratio
-// webcam:      640 x 480 = 1.3
 
 namespace Mtg
 {
@@ -22,10 +23,6 @@ namespace Mtg
     {
         /// <summary>
         /// Where to look for recently scanned images for cards.
-        ///
-        /// Note that by default* these images will be deleted after they are processed.
-        ///
-        /// *This doesn't happen yet.
         /// </summary>
         private readonly string _imageDir = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + "MTG";
 
@@ -45,9 +42,11 @@ namespace Mtg
             LoadCards();
         }
 
+        // invoked when tab control changes current tab.
+        // TODO: refresh data
         private void TabControl1OnSelected(object sender, TabControlEventArgs tabControlEventArgs)
         {
-            Console.WriteLine($"Selected {tabControlEventArgs.TabPageIndex}");
+            //Log($"Selected {tabControlEventArgs.TabPageIndex}");
             switch (tabControlEventArgs.TabPageIndex)
             {
                 case 0:
@@ -59,19 +58,25 @@ namespace Mtg
             }
         }
 
-        private async Task LoadCards()
+        async void LoadCards()
+        {
+            await LoadCardsAsync();
+        }
+
+        private async Task LoadCardsAsync()
         {
             var num = await _cards.Load();
-            Console.WriteLine($"Read {num} cards from library");
+            Log($"Read {num} cards from library");
 
             foreach (var card in _cards.Cards)
             {
-                Console.WriteLine($"Adding {card.Title}");
-                var item = new ListViewItem();
-                item.Text = card.Title;
-                item.Tag = card.TypeId;
-                item.Name = card.Title;
-                listViewLibrary.Items.Add(item);
+                // Log($"Adding {card.Title}");
+                listViewLibrary.Items.Add(new ListViewItem
+                {
+                    Text = card.Title,
+                    Tag = card.TypeId,
+                    Name = card.Title
+                });
             }
         }
 
@@ -81,46 +86,40 @@ namespace Mtg
             _cards.Save();
         }
 
-        private static string TrimMana(string title)
-        {
-            return title.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ' ');
-        }
-
         private async void openImageToolStripMenuItem_ClickAsync(object sender, EventArgs e)
         {
-            //var result = openFileDialog1.ShowDialog();
-            //if (result != DialogResult.OK)
-            //    return;
+            var result = openFileDialog1.ShowDialog();
+            if (result != DialogResult.OK)
+                return;
 
-            //await ProcessFile(openFileDialog1.FileName);
-        }
-
-        private void Log(string text)
-        {
-            Console.WriteLine(text);
+            await _cards.ProcessFileVision(openFileDialog1.FileName);
         }
 
         private async void batchConvertToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Log("Batch Convert Started");
+#if HARD_CODED_IMAGE_PATH
             await ProcessFiles(Directory.GetFiles(@"C:\Users\christian\Pictures\MTG\BlueWhiteDeck"));
+#else
+            using (var fbd = new FolderBrowserDialog())
+            {
+                fbd.SelectedPath = _imageDir;
+                var result = fbd.ShowDialog();
+                if (result != DialogResult.OK || string.IsNullOrWhiteSpace(fbd.SelectedPath))
+                    return;
+
+                await ProcessFiles(Directory.GetFiles(fbd.SelectedPath));
+            }
+#endif
+            await _cards.PullInfo();
             Log("Batch Convert End");
-
-            //using (var fbd = new FolderBrowserDialog())
-            //{
-            //    fbd.SelectedPath = _imageDir;
-            //    var result = fbd.ShowDialog();
-            //    if (result != DialogResult.OK || string.IsNullOrWhiteSpace(fbd.SelectedPath))
-            //        return;
-
-            //    ProcessFiles(Directory.GetFiles(fbd.SelectedPath));
-            //}
         }
 
         private async Task ProcessFiles(IEnumerable<string> fileNames)
         {
             await Task.WhenAll(fileNames.Select(_cards.ProcessFileVision).ToArray());
 
+            // obviously TODO: not hard-code these
             _cards.Save(@"c:\users\christian\desktop\latest.json");
             _cards.Export(@"c:\users\christian\desktop\latest.tappedout");
 
@@ -138,9 +137,7 @@ namespace Mtg
         private void allToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (var card in _cards.Cards)
-            {
-                Console.WriteLine(card);
-            }
+                Log(card.ToString());
         }
 
         private void exportToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -148,10 +145,6 @@ namespace Mtg
             if (saveFileDialog1.ShowDialog() != DialogResult.OK)
                 return;
             _cards.Export(saveFileDialog1.FileName);
-        }
-
-        private void inventoryToolStripMenuItem_Click(object sender, EventArgs e)
-        {
         }
 
         private async void getLatestCardListToolStripMenuItem_Click(object sender, EventArgs e)
@@ -167,27 +160,46 @@ namespace Mtg
             await _cards.PullInfo();
         }
 
+        // Get the currently selected card from the Library tab, if any
+        private Card SelectedCard
+        {
+            get
+            {
+                var items = listViewLibrary.SelectedIndices;
+                if (items.Count != 1)
+                    return null;
+                var item = listViewLibrary.Items[items[0]];
+                var id = (Guid) item.Tag;
+                if (id != Guid.Empty)
+                    return _cards.Get(id);
+                Log($"No id for card {item.Name}");
+                return null;
+            }
+        }
+
         private void listViewLibrary_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var items = listViewLibrary.SelectedIndices;
-            if (items.Count == 0)
-                return;
-            var item = listViewLibrary.Items[items[0]];
-            var id = (Guid) item.Tag;
-            if (id == Guid.Empty)
-            {
-                Console.WriteLine($"No id for card {item.Name}");
-                return;
-            }
-            var card = _cards.Get(id);
+            var card = SelectedCard;
             textBoxCardInfoName.Text = card.Title;
             textBoxCardText.Text = card.ScryfallCard.oracle_text;
+            // TODO: Not hard-code USD -> AUD conversion rate
             textBoxCardCost.Text = "$" + (float.Parse(card.ScryfallCard.usd) * 1.35f).ToString("F1");
 
             if (!string.IsNullOrEmpty(card.ImageFilename))
                 cardPicture.Image = Image.FromFile(card.ImageFilename);
         }
 
-        private readonly Mtg.CardLibrary _cards = new CardLibrary();
+        private void cardPicture_DoubleClick(object sender, EventArgs e)
+        {
+            // TODO: Show all info on card with high-res image
+            Log("Double click on ${SelectedCard?.Title}");
+        }
+
+        private void Log(string text)
+        {
+            Console.WriteLine(text);
+        }
+
+        private readonly CardLibrary _cards = new CardLibrary();
     }
 }

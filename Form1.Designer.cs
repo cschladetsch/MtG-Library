@@ -122,7 +122,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(553, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(560, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             //
@@ -174,7 +174,6 @@
             this.inventoryToolStripMenuItem.Name = "inventoryToolStripMenuItem";
             this.inventoryToolStripMenuItem.Size = new System.Drawing.Size(69, 20);
             this.inventoryToolStripMenuItem.Text = "&Inventory";
-            this.inventoryToolStripMenuItem.Click += new System.EventHandler(this.inventoryToolStripMenuItem_Click);
             //
             // allToolStripMenuItem
             //
@@ -447,7 +446,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 24);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(553, 397);
+            this.tabControl1.Size = new System.Drawing.Size(560, 411);
             this.tabControl1.TabIndex = 4;
             //
             // tabPage1
@@ -478,7 +477,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(545, 371);
+            this.tabPage2.Size = new System.Drawing.Size(552, 385);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "My Library";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -488,7 +487,7 @@
             this.groupBox5.Controls.Add(this.listViewLibrary);
             this.groupBox5.Location = new System.Drawing.Point(7, 7);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(324, 356);
+            this.groupBox5.Size = new System.Drawing.Size(324, 370);
             this.groupBox5.TabIndex = 3;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Cards";
@@ -498,7 +497,7 @@
             this.listViewLibrary.GridLines = true;
             this.listViewLibrary.Location = new System.Drawing.Point(6, 19);
             this.listViewLibrary.Name = "listViewLibrary";
-            this.listViewLibrary.Size = new System.Drawing.Size(312, 331);
+            this.listViewLibrary.Size = new System.Drawing.Size(312, 337);
             this.listViewLibrary.TabIndex = 0;
             this.listViewLibrary.UseCompatibleStateImageBehavior = false;
             this.listViewLibrary.View = System.Windows.Forms.View.List;
@@ -516,7 +515,7 @@
             this.groupBox4.Controls.Add(this.cardInfoName);
             this.groupBox4.Location = new System.Drawing.Point(337, 6);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(200, 357);
+            this.groupBox4.Size = new System.Drawing.Size(200, 371);
             this.groupBox4.TabIndex = 2;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Info";
@@ -534,6 +533,8 @@
             //
             this.textBoxCardCost.Location = new System.Drawing.Point(47, 44);
             this.textBoxCardCost.Name = "textBoxCardCost";
+            this.textBoxCardCost.ReadOnly = true;
+            this.textBoxCardCost.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.textBoxCardCost.Size = new System.Drawing.Size(48, 20);
             this.textBoxCardCost.TabIndex = 7;
             //
@@ -550,9 +551,10 @@
             //
             this.cardPicture.Location = new System.Drawing.Point(47, 160);
             this.cardPicture.Name = "cardPicture";
-            this.cardPicture.Size = new System.Drawing.Size(147, 191);
+            this.cardPicture.Size = new System.Drawing.Size(147, 197);
             this.cardPicture.TabIndex = 5;
             this.cardPicture.TabStop = false;
+            this.cardPicture.DoubleClick += new System.EventHandler(this.cardPicture_DoubleClick);
             //
             // textBoxCardText
             //
@@ -577,6 +579,7 @@
             //
             this.textBoxCardInfoName.Location = new System.Drawing.Point(48, 17);
             this.textBoxCardInfoName.Name = "textBoxCardInfoName";
+            this.textBoxCardInfoName.ReadOnly = true;
             this.textBoxCardInfoName.Size = new System.Drawing.Size(146, 20);
             this.textBoxCardInfoName.TabIndex = 2;
             //
@@ -713,7 +716,7 @@
             //
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(553, 421);
+            this.ClientSize = new System.Drawing.Size(560, 435);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));

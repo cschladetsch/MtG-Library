@@ -50,3 +50,10 @@ You will need to make your own Private key and deal with any other Auth issues y
 
 The program will read a file called 'GoogleVisionAPIKey.txt' to retrieve the private key. This file is not part of the git repo.
 
+### Programming notes
+
+* Cards are:   63mm x 88mm = 1.4 aspect ratio
+* Phone cam:   1280 x 720 = 1.8 aspect ratio
+* Webcam:      640 x 480 = 1.3
+
+
