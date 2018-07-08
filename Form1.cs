@@ -7,31 +7,53 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Media;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WebEye.Controls.WinForms.WebCameraControl;
 
 using static Mtg.Console;
 
+using NAudio.Wave;
+using NAudio.CoreAudioApi;
+
 namespace Mtg
 {
     public partial class Form1 : Form
     {
+        private readonly Dictionary<string, string> _sfxNames = new Dictionary<string, string>()
+        {
+           ["SelectCommon"] = "SelectCommon.mp3",
+           ["SelectUncommon"] = "SelectCommon.mp3",
+           ["SelectRare"] = "SelectCommon.mp3",
+        };
+
+        private readonly Dictionary<string, WaveStream> _sfxFiles = new Dictionary<string, WaveStream>();
+        private IWavePlayer _audioSource = new WaveOut();
+
         public Form1()
         {
             InitializeComponent();
+            Console.ListView = listViewConsole;
+
+            //InitAudio();
 
             Text = "MtG Card Library";
 
             openFileDialog1.InitialDirectory = _imageDir;
-
             _webCamera = new List<WebCameraId>(webCameraControl1.GetVideoCaptureDevices())[0];
-
             tabControl1.Selected += TabControl1OnSelected;
 
-            Console.ListView = listViewConsole;
-
             RefreshLibraryView();
+        }
+
+        private void InitAudio()
+        {
+            foreach (var kv in _sfxNames)
+            {
+                var stream = new Mp3FileReader(kv.Value);
+                _sfxFiles[kv.Key] = stream;
+            }
         }
 
         private void RefreshLibraryView()
@@ -63,10 +85,8 @@ namespace Mtg
             listViewLibrary_ColumnClick(this, new ColumnClickEventArgs(1));
         }
 
-        // invoked when tab control changes current tab.
         private void TabControl1OnSelected(object sender, TabControlEventArgs tabControlEventArgs)
         {
-            //Log($"Selected {tabControlEventArgs.TabPageIndex}");
             if (webCameraControl1.IsCapturing)
                 webCameraControl1.StopCapture();
             switch (tabControlEventArgs.TabPageIndex)
@@ -104,7 +124,6 @@ namespace Mtg
 
             foreach (var card in _cards.Cards)
             {
-                // Log($"Adding {card.Title}");
                 var item = new ListViewItem(card.Title);
                 item.SubItems.Add(card.ScryfallCard.AudText);
                 item.SubItems.Add(card.ScryfallCard.oracle_text);
@@ -222,18 +241,19 @@ namespace Mtg
             if (card == null)
                 return;
             textBoxCardInfoName.Text = card.Title;
-            textBoxCardText.Text = card.ScryfallCard.oracle_text;
-            // TODO: Not hard-code USD -> AUD conversion rate
-            //textBoxCardCost.Text = "$" + (float.Parse(card.ScryfallCard.usd) * 1.35f).ToString("F1");
+            textBoxCardText.Text = card.Text;
 
             if (!string.IsNullOrEmpty(card.ImageFilename))
                 cardPicture.Image = Image.FromFile(card.ImageFilename);
+
+            _audioSource.Init(_sfxFiles["CommonCard"]);
+            _audioSource.Play();
         }
 
         private void cardPicture_DoubleClick(object sender, EventArgs e)
         {
             // TODO: Show all info on card with high-res image
-            Log("Double click on ${SelectedCard?.Title}");
+            Warn($"Double click on {SelectedCard?.Title}");
         }
 
         private void listViewLibrary_ColumnClick(object sender, ColumnClickEventArgs e)
@@ -256,8 +276,8 @@ namespace Mtg
         private void listViewLibrary_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
         {
             var b = e.Bounds;
-            b.Height = (int) (b.Height * 0.6f);  // doing things because otherwise the title columns are too tall??!
-            var color = Brushes.LightGray;//column == e.ColumnIndex ? Brushes.LightGray : Brushes.Gray;
+            b.Height = (int) (b.Height * 0.6f);  // the title columns are too tall??!
+            var color = Brushes.LightGray;
             e.Graphics.FillRectangle(color, b);
             e.DrawText();
         }
@@ -282,12 +302,10 @@ namespace Mtg
             RefreshLibraryView();
         }
 
-        /// <summary>
-        /// Where to look for recently scanned images for cards.
-        /// </summary>
         private readonly string _imageDir = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + "MTG";
-        private WebCameraId _webCamera;
+        private readonly WebCameraId _webCamera;
         private readonly CardLibrary _cards = new CardLibrary();
         private int _sortColumn = -1;
+        private System.Media.SoundPlayer _soundPlayer =  new SoundPlayer();
     }
 }

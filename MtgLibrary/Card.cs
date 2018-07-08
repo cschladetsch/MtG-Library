@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-
 using Flurl;
 using Flurl.Http;
 using static Mtg.Console;
@@ -16,22 +15,21 @@ namespace Mtg
     /// </summary>
     public class Card
     {
-        private const string Endpoint = "https://api.scryfall.com";
-
         public Guid TypeId;
         public Guid ScryfallId;
+
         public string Title;
         public ManaCost ManaCost;
         public ECardType Type;
         public string Name;
-        public string Text;
+        public string Text => ScryfallCard?.oracle_text;
         public ERelease Release;
         public ScryfallCard ScryfallCard;
         public string ImageFilename;
 
         public override string ToString()
         {
-            return ($"Title={Title}, Text={ScryfallCard?.oracle_text}");
+            return ($"{Title}, {Text}");
         }
 
         public async Task<bool> PullInfo()
@@ -85,5 +83,7 @@ namespace Mtg
             };
             return replacements.Aggregate(text, (current, kv) => current.Replace(kv.Key, kv.Value));
         }
+
+        private const string Endpoint = "https://api.scryfall.com";
     }
 }
