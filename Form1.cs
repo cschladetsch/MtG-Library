@@ -248,8 +248,8 @@ namespace Mtg
                 cardPicture.Image = Image.FromFile(card.ImageFilename);
 
             var stream = _sfxFiles["Common"];
-            _audioSource.Init(stream);
             stream.Seek(0L, SeekOrigin.Begin);
+            _audioSource.Init(stream);
             _audioSource.Play();
         }
 
