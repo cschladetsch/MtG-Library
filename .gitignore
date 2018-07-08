@@ -6,6 +6,7 @@ obj/
 [Dd]ebug/
 
 packages
+!Resources/
 
 *.suo
 *.tmp

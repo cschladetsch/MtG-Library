@@ -23,10 +23,10 @@ namespace Mtg
     {
         private readonly Dictionary<string, string> _sfxNames = new Dictionary<string, string>()
         {
-           ["Common"] = "c:\\SelectCommon.mp3",
-           ["Uncommon"] = "c:\\SelectCommon.mp3",
-           ["Rare"] = "c:\\SelectCommon.mp3",
-           ["Mythical"] = "c:\\SelectCommon.mp3",
+           ["common"] = "Resources\\SelectCommon.mp3",
+           ["uncommon"] = "Resources\\SelectUncommon.mp3",
+           ["rare"] = "Resources\\SelectRare.mp3",
+           ["mythic"] = "Resources\\SelectMythic.mp3",
         };
 
         private readonly Dictionary<string, WaveStream> _sfxFiles = new Dictionary<string, WaveStream>();
@@ -247,7 +247,18 @@ namespace Mtg
             if (!string.IsNullOrEmpty(card.ImageFilename))
                 cardPicture.Image = Image.FromFile(card.ImageFilename);
 
-            var stream = _sfxFiles["Common"];
+            PlaySfx(card.ScryfallCard.rarity);
+        }
+
+        private void PlaySfx(string type)
+        {
+            if (!_sfxFiles.ContainsKey(type))
+            {
+                Error($"No sfx for type {type}");
+                return;
+            }
+
+            var stream = _sfxFiles[type];
             stream.Seek(0L, SeekOrigin.Begin);
             _audioSource.Init(stream);
             _audioSource.Play();
