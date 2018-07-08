@@ -248,7 +248,7 @@ namespace Mtg
             // so add a de-bounce.
             var now = DateTime.Now;
             var dt = now - _lastSfx;
-            if (dt.TotalMilliseconds < 200)
+            if (dt.TotalMilliseconds < 350)
                 return;
 
             var stream = _sfxFiles[type];
