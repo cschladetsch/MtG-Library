@@ -1,10 +1,4 @@
-﻿// This file, like many WinForms-based apps, has become a bit of a mess.
-// I did have a stab at using custom User Controls for the different TabPages,
-// but it became too unwieldly.
-
-// At least, all the non-UI library is in the separate 'MtgLibrary.dll' assembly.
-
-// Use hard-coded path to images for faster development iteration
+﻿// Use hard-coded path to images for faster development iteration
 //#define HARD_CODED_IMAGE_PATH
 
 using System;
@@ -26,6 +20,8 @@ namespace Mtg
         /// </summary>
         private readonly string _imageDir = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + "MTG";
 
+        private WebCameraId _webCamera;
+
         public Form1()
         {
             InitializeComponent();
@@ -34,18 +30,22 @@ namespace Mtg
 
             openFileDialog1.InitialDirectory = _imageDir;
 
-            var cameras = new List<WebCameraId>(webCameraControl1.GetVideoCaptureDevices());
-            webCameraControl1.StartCapture(cameras[0]);
+            _webCamera = new List<WebCameraId>(webCameraControl1.GetVideoCaptureDevices())[0];
 
             tabControl1.Selected += TabControl1OnSelected;
 
+            RefreshLibraryView();
+        }
+
+        private void RefreshLibraryView()
+        {
             LoadCards();
+            SortByPrice();
+            SelectTop();
+        }
 
-            // quick hack to sort by card cost
-            listViewLibrary_ColumnClick(this, new ColumnClickEventArgs(1));
-            listViewLibrary_ColumnClick(this, new ColumnClickEventArgs(1));
-
-            // select most expensive item by default
+        private void SelectTop()
+        {
             var highest = 0.0f;
             var items = listViewLibrary.Items;
             foreach (ListViewItem item in items)
@@ -59,21 +59,37 @@ namespace Mtg
             }
         }
 
+        private void SortByPrice()
+        {
+            // quick hack to sort by card cost
+            listViewLibrary_ColumnClick(this, new ColumnClickEventArgs(1));
+            listViewLibrary_ColumnClick(this, new ColumnClickEventArgs(1));
+        }
+
         // invoked when tab control changes current tab.
-        // TODO: refresh data
         private void TabControl1OnSelected(object sender, TabControlEventArgs tabControlEventArgs)
         {
             Log($"Selected {tabControlEventArgs.TabPageIndex}");
+            if (webCameraControl1.IsCapturing)
+                webCameraControl1.StopCapture();
             switch (tabControlEventArgs.TabPageIndex)
             {
+                // my library
                 case 0:
-                    {
-                        //listViewLibrary_ColumnClick(this, new ColumnClickEventArgs(1));
-                    }
+                    RefreshLibraryView();
                     break;
+                // my decks
                 case 1:
                     break;
+                // webcam
                 case 2:
+                    webCameraControl1.StartCapture(_webCamera);
+                    break;
+                // console
+                case 3:
+                    break;
+                // all cards
+                case 4:
                     break;
             }
         }
@@ -262,5 +278,18 @@ namespace Mtg
         private readonly CardLibrary _cards = new CardLibrary();
         private int _sortColumn = -1;
 
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new AboutBox1().Show();
+        }
+
+        // take a snapshot of card from webcam. only really need to see the title.
+        private async void button3_Click(object sender, EventArgs e)
+        {
+            var tmp = Path.GetTempFileName();
+            webCameraControl1.GetCurrentImage().Save(tmp);
+            await _cards.ProcessFileVision(tmp);
+            File.Delete(tmp);
+        }
     }
 }

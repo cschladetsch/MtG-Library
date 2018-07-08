@@ -93,32 +93,28 @@ namespace Mtg
             ProcessResponse(JsonConvert.DeserializeObject<VisionResponse>(result));
         }
 
-        private void ProcessResponse(VisionResponse res)
+        private void ProcessResponse(VisionResponse visionRecog)
         {
-            if (res == null)
+            if (visionRecog == null)
             {
                 //MessageBox.Show("Process Failed", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            if (res.responses.Count == 0)
+            if (visionRecog.responses.Count == 0)
             {
                 //MessageBox.Show("No text found", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            var fullText = res.responses[0].FullTextAnnotation;
+            var fullText = visionRecog.responses[0].FullTextAnnotation;
             if (fullText == null)
             {
                 Console.WriteLine("WARN: Empty vision response");
                 return;
             }
 
-            //var text = res.responses[0].FullTextAnnotation.text;
-            //var split = text.Split('\n');
-            //_cardTitleText.Text = TrimMana(split[0]);
-
-            Add(res);
+            Add(visionRecog);
         }
 
         async Task<string> Post(string base64Content)
@@ -173,8 +169,6 @@ namespace Mtg
         }
 
         public void Add(VisionResponse res)
-            //, Func<string, List<string>, bool> validateExisting
-            //, Func<string, Image, bool> valdiateNew)
         {
             var text = res.responses[0].FullTextAnnotation.text;
             var split = text.Split('\n');
