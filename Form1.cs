@@ -23,9 +23,10 @@ namespace Mtg
     {
         private readonly Dictionary<string, string> _sfxNames = new Dictionary<string, string>()
         {
-           ["SelectCommon"] = "SelectCommon.mp3",
-           ["SelectUncommon"] = "SelectCommon.mp3",
-           ["SelectRare"] = "SelectCommon.mp3",
+           ["Common"] = "c:\\SelectCommon.mp3",
+           ["Uncommon"] = "c:\\SelectCommon.mp3",
+           ["Rare"] = "c:\\SelectCommon.mp3",
+           ["Mythical"] = "c:\\SelectCommon.mp3",
         };
 
         private readonly Dictionary<string, WaveStream> _sfxFiles = new Dictionary<string, WaveStream>();
@@ -36,7 +37,7 @@ namespace Mtg
             InitializeComponent();
             Console.ListView = listViewConsole;
 
-            //InitAudio();
+            InitAudio();
 
             Text = "MtG Card Library";
 
@@ -246,7 +247,8 @@ namespace Mtg
             if (!string.IsNullOrEmpty(card.ImageFilename))
                 cardPicture.Image = Image.FromFile(card.ImageFilename);
 
-            _audioSource.Init(_sfxFiles["CommonCard"]);
+            _audioSource.Init(_sfxFiles["Common"]);
+            _sfxFiles["Common"].Seek(0L, SeekOrigin.Begin);
             _audioSource.Play();
         }
 
