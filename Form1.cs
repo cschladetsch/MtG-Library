@@ -7,31 +7,18 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Media;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
 using WebEye.Controls.WinForms.WebCameraControl;
+using NAudio.Wave;
 
 using static Mtg.Console;
-
-using NAudio.Wave;
-using NAudio.CoreAudioApi;
 
 namespace Mtg
 {
     public partial class Form1 : Form
     {
-        private readonly Dictionary<string, string> _sfxNames = new Dictionary<string, string>()
-        {
-           ["common"] = "Resources\\SelectCommon.mp3",
-           ["uncommon"] = "Resources\\SelectUncommon.mp3",
-           ["rare"] = "Resources\\SelectRare.mp3",
-           ["mythic"] = "Resources\\SelectMythic.mp3",
-        };
-
-        private readonly Dictionary<string, WaveStream> _sfxFiles = new Dictionary<string, WaveStream>();
-        private IWavePlayer _audioSource = new WaveOut();
-
         public Form1()
         {
             InitializeComponent();
@@ -51,10 +38,7 @@ namespace Mtg
         private void InitAudio()
         {
             foreach (var kv in _sfxNames)
-            {
-                var stream = new Mp3FileReader(kv.Value);
-                _sfxFiles[kv.Key] = stream;
-            }
+                _sfxFiles[kv.Key] = new Mp3FileReader(kv.Value);
         }
 
         private void RefreshLibraryView()
@@ -250,6 +234,8 @@ namespace Mtg
             PlaySfx(card.ScryfallCard.rarity);
         }
 
+        private DateTime _lastSfx;
+
         private void PlaySfx(string type)
         {
             if (!_sfxFiles.ContainsKey(type))
@@ -258,10 +244,18 @@ namespace Mtg
                 return;
             }
 
+            // this can stall on occasion when flipping through cards fast,
+            // so add a de-bounce.
+            var now = DateTime.Now;
+            var dt = now - _lastSfx;
+            if (dt.TotalMilliseconds < 200)
+                return;
+
             var stream = _sfxFiles[type];
             stream.Seek(0L, SeekOrigin.Begin);
             _audioSource.Init(stream);
             _audioSource.Play();
+            _lastSfx = now;
         }
 
         private void cardPicture_DoubleClick(object sender, EventArgs e)
@@ -320,6 +314,16 @@ namespace Mtg
         private readonly WebCameraId _webCamera;
         private readonly CardLibrary _cards = new CardLibrary();
         private int _sortColumn = -1;
-        private System.Media.SoundPlayer _soundPlayer =  new SoundPlayer();
+
+        private readonly Dictionary<string, string> _sfxNames = new Dictionary<string, string>()
+        {
+           ["common"] = "Resources\\SelectCommon.mp3",
+           ["uncommon"] = "Resources\\SelectUncommon.mp3",
+           ["rare"] = "Resources\\SelectRare.mp3",
+           ["mythic"] = "Resources\\SelectMythic.mp3",
+        };
+
+        private readonly Dictionary<string, WaveStream> _sfxFiles = new Dictionary<string, WaveStream>();
+        private readonly IWavePlayer _audioSource = new WaveOut();
     }
 }
