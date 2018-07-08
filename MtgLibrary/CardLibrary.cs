@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
-using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,6 +10,8 @@ using Flurl;
 using Flurl.Http;
 
 using OpenCvSharp;
+
+using static Mtg.Console;
 
 #pragma warning disable 649
 
@@ -78,7 +79,7 @@ namespace Mtg
             if (fileName.Contains("-short"))
                 return;
 
-            Console.WriteLine($"Processing file {fileName}");
+            Log($"Processing file {fileName}");
             var src = new Mat(fileName);
             var width = (float)src.Width;
             var height = (float)src.Height;
@@ -87,7 +88,7 @@ namespace Mtg
             height = width/aspect;
             var dest = src.Resize(new Size(width, height));
             var bytes = dest.ToBytes(ext: ".jpg");
-            Console.WriteLine($"Converted to {width}x{height}, {bytes.Length} bytes.jpg");
+            Log($"Converted to {width}x{height}, {bytes.Length} bytes.jpg");
             dest.ImWrite(fileName + "-short.jpg");  // just for comparison with original
             var result = await Post(Convert.ToBase64String(bytes));
             ProcessResponse(JsonConvert.DeserializeObject<VisionResponse>(result));
@@ -110,7 +111,7 @@ namespace Mtg
             var fullText = visionRecog.responses[0].FullTextAnnotation;
             if (fullText == null)
             {
-                Console.WriteLine("WARN: Empty vision response");
+                Warn("Empty vision response");
                 return;
             }
 
@@ -119,17 +120,16 @@ namespace Mtg
 
         async Task<string> Post(string base64Content)
         {
-            // hacky, but it works
             var text = @"
             {
-             ""requests"": [
+             'requests': [
               {
-                ""image"": {
-                  ""content"": ""$CONTENT""
+                'image': {
+                  'content': '$CONTENT'
                 },
-                ""features"": [
+                'features': [
                 {
-                  ""type"": ""TEXT_DETECTION""
+                  'type': 'TEXT_DETECTION'
                 }
                ]
               }
@@ -148,13 +148,13 @@ namespace Mtg
         {
             if (!File.Exists(fileName))
             {
-                Console.WriteLine("Starting new library");
+                Warn("Starting new library");
                 _library = new PersistentLibrary();
             }
 
             if (!File.Exists(AllCardsFileName))
             {
-                Console.WriteLine("Do not have list of all cards; fetching");
+                Warn("Do not have list of all cards; fetching");
                 await GetAllCardNames();
             }
 
@@ -175,7 +175,7 @@ namespace Mtg
             var input = TrimMana(split[0]);
             var title = ClosestStringMatch.Find(input, _allCardNames.data);
 
-            Console.WriteLine($"Found {title} as best match for {input}");
+            Log($"Found {title} as best match for {input}");
 
             var card = new Card()
             {
@@ -185,12 +185,12 @@ namespace Mtg
             var existing = _library.Find(title);
             if (existing != null)
             {
-                Console.WriteLine($"Duplicate card {card.Title}");
+                Log($"Duplicate card {card.Title}");
                 card.TypeId = existing.TypeId;
             }
             else
             {
-                Console.WriteLine($"New card {card.Title}");
+                Warn($"New card {card.Title}");
                 card.TypeId = Guid.NewGuid();
                 _library.AddType(card);
             }
@@ -245,12 +245,12 @@ namespace Mtg
                     .SetQueryParam("format", "json")
                     .GetJsonAsync<AllCardNames>();
                 File.WriteAllText(AllCardsFileName, JsonConvert.SerializeObject(_allCardNames));
-                Console.WriteLine($"Fetched {_allCardNames.data.Count} card names");
+                Log($"Fetched {_allCardNames.data.Count} card names");
                 return true;
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Error: {e.Message}");
+                Error($"Error: {e.Message}");
                 return false;
             }
         }
@@ -267,7 +267,7 @@ namespace Mtg
                 _lastQuery = now;
 
                 if (!await card.PullInfo())
-                    Console.WriteLine($"Couldn't find info on {card.Title}");
+                    Warn($"Couldn't find info on {card.Title}");
             }
 
             return true;

@@ -11,17 +11,12 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using WebEye.Controls.WinForms.WebCameraControl;
 
+using static Mtg.Console;
+
 namespace Mtg
 {
     public partial class Form1 : Form
     {
-        /// <summary>
-        /// Where to look for recently scanned images for cards.
-        /// </summary>
-        private readonly string _imageDir = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + "MTG";
-
-        private WebCameraId _webCamera;
-
         public Form1()
         {
             InitializeComponent();
@@ -33,6 +28,8 @@ namespace Mtg
             _webCamera = new List<WebCameraId>(webCameraControl1.GetVideoCaptureDevices())[0];
 
             tabControl1.Selected += TabControl1OnSelected;
+
+            Console.ListView = listViewConsole;
 
             RefreshLibraryView();
         }
@@ -69,7 +66,7 @@ namespace Mtg
         // invoked when tab control changes current tab.
         private void TabControl1OnSelected(object sender, TabControlEventArgs tabControlEventArgs)
         {
-            Log($"Selected {tabControlEventArgs.TabPageIndex}");
+            //Log($"Selected {tabControlEventArgs.TabPageIndex}");
             if (webCameraControl1.IsCapturing)
                 webCameraControl1.StopCapture();
             switch (tabControlEventArgs.TabPageIndex)
@@ -160,9 +157,9 @@ namespace Mtg
             _cards.Save(@"c:\users\christian\desktop\latest.json");
             _cards.Export(@"c:\users\christian\desktop\latest.tappedout");
 
-            Console.WriteLine($"Batch completed, total of {_cards.Cards.Count()} cards");
+            Log($"Batch completed, total of {_cards.Cards.Count()} cards");
             var pulled = await _cards.PullInfo();
-            Console.WriteLine($"Pulled info={pulled}");
+            Log($"Pulled info={pulled}");
         }
 
         private void resetToolStripMenuItem_Click(object sender, EventArgs e)
@@ -239,11 +236,6 @@ namespace Mtg
             Log("Double click on ${SelectedCard?.Title}");
         }
 
-        private void Log(string text)
-        {
-            Console.WriteLine(text);
-        }
-
         private void listViewLibrary_ColumnClick(object sender, ColumnClickEventArgs e)
         {
             var list = listViewLibrary;
@@ -275,9 +267,6 @@ namespace Mtg
             e.DrawDefault = true;
         }
 
-        private readonly CardLibrary _cards = new CardLibrary();
-        private int _sortColumn = -1;
-
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             new AboutBox1().Show();
@@ -290,6 +279,15 @@ namespace Mtg
             webCameraControl1.GetCurrentImage().Save(tmp);
             await _cards.ProcessFileVision(tmp);
             File.Delete(tmp);
+            RefreshLibraryView();
         }
+
+        /// <summary>
+        /// Where to look for recently scanned images for cards.
+        /// </summary>
+        private readonly string _imageDir = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + "MTG";
+        private WebCameraId _webCamera;
+        private readonly CardLibrary _cards = new CardLibrary();
+        private int _sortColumn = -1;
     }
 }

@@ -4,8 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
+
 using Flurl;
 using Flurl.Http;
+using static Mtg.Console;
 
 namespace Mtg
 {
@@ -39,7 +41,12 @@ namespace Mtg
                 var result = await Endpoint.AppendPathSegment("cards/named")
                     .SetQueryParam("fuzzy", Title)
                     .GetJsonAsync<ScryfallCard>();
-                Console.WriteLine($"Info for {Title}: {result}");
+                if (result == null)
+                {
+                    Log($"Couldn't find infor for {Title}");
+                    return false;
+                }
+                Log($"Info for {Title}: {result.oracle_text}");
                 ScryfallId = result.id;
                 Title = result.name;
                 ScryfallCard = result;
@@ -53,14 +60,14 @@ namespace Mtg
                 {
                     var bytes = await imageUri.GetBytesAsync();
                     File.WriteAllBytes(imagePath, bytes);
-                    Console.WriteLine($"Wrote image for {result.name} to {ImageFilename}");
+                    Log($"Wrote image for {result.name} to {ImageFilename}");
                 }
 
                 return true;
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Error getting info on {Title}: {e.Message}");
+                Error($"Error getting info on {Title}: {e.Message}");
                 return false;
             }
         }

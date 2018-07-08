@@ -95,7 +95,7 @@
             this.button3 = new System.Windows.Forms.Button();
             this.webCameraControl1 = new WebEye.Controls.WinForms.WebCameraControl.WebCameraControl();
             this.tabPage4 = new System.Windows.Forms.TabPage();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.listViewConsole = new System.Windows.Forms.ListView();
             this.tabPage5 = new System.Windows.Forms.TabPage();
             this.listView4 = new System.Windows.Forms.ListView();
             libraryColumnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -323,7 +323,7 @@
             // aboutToolStripMenuItem
             //
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "&About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             //
@@ -643,7 +643,7 @@
             //
             // tabPage4
             //
-            this.tabPage4.Controls.Add(this.richTextBox1);
+            this.tabPage4.Controls.Add(this.listViewConsole);
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Size = new System.Drawing.Size(687, 390);
@@ -651,14 +651,16 @@
             this.tabPage4.Text = "Console";
             this.tabPage4.UseVisualStyleBackColor = true;
             //
-            // richTextBox1
+            // listViewConsole
             //
-            this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.richTextBox1.Location = new System.Drawing.Point(0, 0);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(687, 341);
-            this.richTextBox1.TabIndex = 0;
-            this.richTextBox1.Text = "";
+            this.listViewConsole.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listViewConsole.LabelWrap = false;
+            this.listViewConsole.Location = new System.Drawing.Point(0, 0);
+            this.listViewConsole.Name = "listViewConsole";
+            this.listViewConsole.Size = new System.Drawing.Size(687, 390);
+            this.listViewConsole.TabIndex = 0;
+            this.listViewConsole.UseCompatibleStateImageBehavior = false;
+            this.listViewConsole.View = System.Windows.Forms.View.List;
             //
             // tabPage5
             //
@@ -767,7 +769,6 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TabPage tabPage4;
-        private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.TextBox textBoxCardInfoName;
         private System.Windows.Forms.ProgressBar progressBar2;
@@ -775,6 +776,7 @@
         private System.Windows.Forms.ListView listView4;
         private System.Windows.Forms.PictureBox cardPicture;
         private System.Windows.Forms.TextBox textBoxCardText;
+        private System.Windows.Forms.ListView listViewConsole;
     }
 }
 

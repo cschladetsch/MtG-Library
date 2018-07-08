@@ -82,6 +82,12 @@
     <None Include="packages.config" />
     <None Include="Readme.md" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OutputConsole\OutputConsole.csproj">
+      <Project>{d7ff8ce9-4770-49d8-b8d2-938125e50cf1}</Project>
+      <Name>OutputConsole</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
