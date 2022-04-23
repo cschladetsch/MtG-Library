@@ -68,7 +68,7 @@ namespace Mtg
         {
             _library.Clear();
         }
-
+ 
         public Card Get(Guid id)
         {
             return _library.Find(id);
@@ -273,11 +273,10 @@ namespace Mtg
             return true;
         }
 
-        //private Dictionary<Guid, System.Drawing.
         private PersistentLibrary _library;
-        //private List<Deck> _decks;
         private AllCardNames _allCardNames;
         private DateTime _lastQuery;
         private readonly string _visionApiKey;
+
     }
 }

@@ -1,6 +1,6 @@
 # MtG Library Helper
 
-[TOC]
+** AM fixinf this April 2022 *
 
 This project intends to assist with the automation of generating deck descriptions for **Magic the Gathering** (MtG) trading card game.
 
