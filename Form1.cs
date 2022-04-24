@@ -19,6 +19,8 @@ namespace Mtg
 {
     public partial class Form1 : Form
     {
+        private DateTime _lastSfx;
+
         public Form1()
         {
             InitializeComponent();
@@ -29,7 +31,12 @@ namespace Mtg
             Text = "MtG Card Library";
 
             openFileDialog1.InitialDirectory = _imageDir;
-            _webCamera = new List<WebCameraId>(webCameraControl1.GetVideoCaptureDevices())[0];
+            for (int i = 0; i < listViewConsole.Items.Count; i++)
+            {
+                var _webCamera = listViewConsole.Items[i];
+                Log(_webCamera.Text);
+            }
+                   
             tabControl1.Selected += TabControl1OnSelected;
 
             RefreshLibraryView();
@@ -50,32 +57,28 @@ namespace Mtg
 
         private void SelectTop()
         {
-            var highest = 0.0f;
-            var items = listViewLibrary.Items;
-            foreach (ListViewItem item in items)
-            {
-                var cost = float.Parse(_cards.Get((Guid) item.Tag).ScryfallCard.usd);
-                if (cost > highest)
-                {
-                    item.Selected = true;
-                    highest = cost;
-                }
-            }
         }
 
         private void SortByPrice()
         {
             // quick hack to sort by card cost
-            listViewLibrary_ColumnClick(this, new ColumnClickEventArgs(1));
-            listViewLibrary_ColumnClick(this, new ColumnClickEventArgs(1));
+            ListViewLibrary_ColumnClick(this, new ColumnClickEventArgs(1));
+            ListViewLibrary_ColumnClick(this, new ColumnClickEventArgs(1));
         }
 
         private void TabControl1OnSelected(object sender, TabControlEventArgs tabControlEventArgs)
         {
-            if (webCameraControl1.IsCapturing)
-                webCameraControl1.StopCapture();
-            switch (tabControlEventArgs.TabPageIndex)
+            if (_webCamera != null)
             {
+                Log("No webcam");
+                return;
+            }
+
+            if (webCameraControl1.IsCapturing) {
+                webCameraControl1.StopCapture();
+            }
+
+            switch (tabControlEventArgs.TabPageIndex) {
                 // my library
                 case 0:
                     RefreshLibraryView();
@@ -85,7 +88,17 @@ namespace Mtg
                     break;
                 // webcam
                 case 2:
-                    webCameraControl1.StartCapture(_webCamera);
+                    if (webCameraControl1 == null)
+                    {
+                        Log("No WebCam input");
+                    } else {
+                        if (_webCamera == null)
+                        {
+                            Log("ERR: Wenbam is null)");
+                            return;
+                        }
+                        webCameraControl1.StartCapture(_webCamera);
+                    }
                     break;
                 // console
                 case 3:
@@ -98,6 +111,10 @@ namespace Mtg
 
         async void LoadCards()
         {
+            if (_cards == null) {
+                Log("Starting new library");
+                return;
+            }
             await LoadCardsAsync();
         }
 
@@ -107,8 +124,7 @@ namespace Mtg
             listViewLibrary.Items.Clear();
             Log($"Read {num} cards from library");
 
-            foreach (var card in _cards.Cards)
-            {
+            foreach (var card in _cards.Cards) {
                 var item = new ListViewItem(card.Title);
                 item.SubItems.Add(card.ScryfallCard.AudText);
                 item.SubItems.Add(card.ScryfallCard.oracle_text);
@@ -124,7 +140,7 @@ namespace Mtg
             _cards.Save();
         }
 
-        private async void openImageToolStripMenuItem_ClickAsync(object sender, EventArgs e)
+        private async void OpenImageToolStripMenuItem_ClickAsync(object sender, EventArgs e)
         {
             var result = openFileDialog1.ShowDialog();
             if (result != DialogResult.OK)
@@ -133,18 +149,18 @@ namespace Mtg
             await _cards.ProcessFileVision(openFileDialog1.FileName);
         }
 
-        private async void batchConvertToolStripMenuItem_Click(object sender, EventArgs e)
+        private async void BatchConvertToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Log("Batch Convert Started");
 #if HARD_CODED_IMAGE_PATH
             await ProcessFiles(Directory.GetFiles(@"C:\Users\christian\Pictures\MTG\BlueWhiteDeck"));
 #else
-            using (var fbd = new FolderBrowserDialog())
-            {
+            using (var fbd = new FolderBrowserDialog()) {
                 fbd.SelectedPath = _imageDir;
                 var result = fbd.ShowDialog();
-                if (result != DialogResult.OK || string.IsNullOrWhiteSpace(fbd.SelectedPath))
+                if (result != DialogResult.OK || string.IsNullOrWhiteSpace(fbd.SelectedPath)) {
                     return;
+               }
 
                 await ProcessFiles(Directory.GetFiles(fbd.SelectedPath));
             }
@@ -153,88 +169,87 @@ namespace Mtg
             Log("Batch Convert End");
         }
 
-        private async Task ProcessFiles(IEnumerable<string> fileNames)
-        {
+        private async Task ProcessFiles(IEnumerable<string> fileNames) {
             await Task.WhenAll(fileNames.Select(_cards.ProcessFileVision).ToArray());
 
             // obviously TODO: not hard-code these
-            _cards.Save(@"c:\users\christian\desktop\latest.json");
-            _cards.Export(@"c:\users\christian\desktop\latest.tappedout");
+            _cards.Save(@"c:\users\chris\desktop\latest.json");
+            _cards.Export(@"c:\users\chri\desktop\latest.tappedout");
 
             Log($"Batch completed, total of {_cards.Cards.Count()} cards");
             var pulled = await _cards.PullInfo();
             Log($"Pulled info={pulled}");
         }
 
-        private void resetToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void ResetToolStripMenuItem_Click(object sender, EventArgs e) {
             _cards.Clear();
             listViewLibrary.Items.Clear();
         }
 
-        private void allToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (var card in _cards.Cards)
+        private void AllToolStripMenuItem_Click(object sender, EventArgs e) {
+            foreach (var card in _cards.Cards) {
                 Log(card.ToString());
+            }
         }
 
-        private void exportToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            if (saveFileDialog1.ShowDialog() != DialogResult.OK)
+        private void ExportToolStripMenuItem1_Click(object sender, EventArgs e) {
+            if (saveFileDialog1.ShowDialog() != DialogResult.OK) {
                 return;
+            }
             _cards.Export(saveFileDialog1.FileName);
         }
 
-        private async void getLatestCardListToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (await _cards.GetAllCardNames())
+        private async void GetLatestCardListToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (await _cards.GetAllCardNames()) {
                 MessageBox.Show($"Retrieved {_cards.AllExisitingCardnames.Count()} card names");
-            else
+            }  else {
                 MessageBox.Show("Failed to get card names", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        private async void updateCardDetailsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private async void UpdateCardDetailsToolStripMenuItem_Click(object sender, EventArgs e) {
             await _cards.PullInfo();
         }
 
         // Get the currently selected card from the Library tab, if any
-        private Card SelectedCard
-        {
-            get
-            {
+        private Card SelectedCard {
+            get {
                 var items = listViewLibrary.SelectedIndices;
-                if (items.Count != 1)
+                if (items.Count != 1) {
                     return null;
+                }
+
                 var item = listViewLibrary.Items[items[0]];
-                if (item?.Tag == null)
-                {
+                if (item?.Tag == null) {
                     Log($"Bad entry {item}");
                     return null;
                 }
+
                 var id = (Guid) item.Tag;
-                if (id != Guid.Empty)
+                if (id != Guid.Empty) {
                     return _cards.Get(id);
+                }
+
                 Log($"No id for card {item.Name}");
                 return null;
             }
         }
 
-        private void listViewLibrary_SelectedIndexChanged(object sender, EventArgs e)
-        {
+        private void ListViewLibrary_SelectedIndexChanged(object sender, EventArgs e) {
             var card = SelectedCard;
-            if (card == null)
+            if (card == null) {
                 return;
+            }
+
             textBoxCardInfoName.Text = card.Title;
             textBoxCardText.Text = card.Text;
 
-            if (!string.IsNullOrEmpty(card.ImageFilename))
+            if (!string.IsNullOrEmpty(card.ImageFilename)) {
                 cardPicture.Image = Image.FromFile(card.ImageFilename);
+            }
 
             PlaySfx(card.ScryfallCard.rarity);
         }
-
-        private DateTime _lastSfx;
 
         private void PlaySfx(string type)
         {
@@ -248,8 +263,9 @@ namespace Mtg
             // so add a de-bounce.
             var now = DateTime.Now;
             var dt = now - _lastSfx;
-            if (dt.TotalMilliseconds < 350)
+            if (dt.TotalMilliseconds < 350) {
                 return;
+            }
 
             var stream = _sfxFiles[type];
             stream.Seek(0L, SeekOrigin.Begin);
@@ -258,30 +274,27 @@ namespace Mtg
             _lastSfx = now;
         }
 
-        private void cardPicture_DoubleClick(object sender, EventArgs e)
+        private void CardPicture_DoubleClick(object sender, EventArgs e)
         {
             // TODO: Show all info on card with high-res image
             Warn($"Double click on {SelectedCard?.Title}");
         }
 
-        private void listViewLibrary_ColumnClick(object sender, ColumnClickEventArgs e)
+        private void ListViewLibrary_ColumnClick(object sender, ColumnClickEventArgs e)
         {
             var list = listViewLibrary;
-            if (e.Column != _sortColumn)
-            {
+            if (e.Column != _sortColumn) {
                 _sortColumn = e.Column;
                 list.Sorting = SortOrder.Ascending;
-            }
-            else
-            {
+            } else {
                 list.Sorting = list.Sorting == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
             }
 
             list.Sort();
-            list.ListViewItemSorter = new ListViewUtil.Comparer(e.Column, list.Sorting);
+            // TODOD list.ListViewItemSorter = new ListViewUtil.Comparer(e.Column, list.Sorting);
         }
 
-        private void listViewLibrary_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
+        private void ListViewLibrary_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
         {
             var b = e.Bounds;
             b.Height = (int) (b.Height * 0.6f);  // the title columns are too tall??!
@@ -290,18 +303,18 @@ namespace Mtg
             e.DrawText();
         }
 
-        private void listViewLibrary_DrawItem(object sender, DrawListViewItemEventArgs e)
+        private void ListViewLibrary_DrawItem(object sender, DrawListViewItemEventArgs e)
         {
             e.DrawDefault = true;
         }
 
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             new AboutBox1().Show();
         }
 
         // take a snapshot of card from webcam. only really need to see the title.
-        private async void button3_Click(object sender, EventArgs e)
+        private async void Button3_Click(object sender, EventArgs e)
         {
             var tmp = Path.GetTempFileName();
             webCameraControl1.GetCurrentImage().Save(tmp);
@@ -327,3 +340,4 @@ namespace Mtg
         private readonly IWavePlayer _audioSource = new WaveOut();
     }
 }
+

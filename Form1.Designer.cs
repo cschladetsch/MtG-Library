@@ -160,14 +160,14 @@
             this.openImageToolStripMenuItem.Name = "openImageToolStripMenuItem";
             this.openImageToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.openImageToolStripMenuItem.Text = "&Open Image...";
-            this.openImageToolStripMenuItem.Click += new System.EventHandler(this.openImageToolStripMenuItem_ClickAsync);
+            this.openImageToolStripMenuItem.Click += new System.EventHandler(this.OpenImageToolStripMenuItem_ClickAsync);
             //
             // batchConvertToolStripMenuItem
             //
             this.batchConvertToolStripMenuItem.Name = "batchConvertToolStripMenuItem";
             this.batchConvertToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.batchConvertToolStripMenuItem.Text = "&Batch Convert...";
-            this.batchConvertToolStripMenuItem.Click += new System.EventHandler(this.batchConvertToolStripMenuItem_Click);
+            this.batchConvertToolStripMenuItem.Click += new System.EventHandler(this.BatchConvertToolStripMenuItem_Click);
             //
             // toolStripSeparator1
             //
@@ -198,7 +198,7 @@
             this.allToolStripMenuItem.Name = "allToolStripMenuItem";
             this.allToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
             this.allToolStripMenuItem.Text = "&All";
-            this.allToolStripMenuItem.Click += new System.EventHandler(this.allToolStripMenuItem_Click);
+            this.allToolStripMenuItem.Click += new System.EventHandler(this.AllToolStripMenuItem_Click);
             //
             // byColorToolStripMenuItem
             //
@@ -247,28 +247,28 @@
             this.resetToolStripMenuItem.Name = "resetToolStripMenuItem";
             this.resetToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
             this.resetToolStripMenuItem.Text = "&Reset";
-            this.resetToolStripMenuItem.Click += new System.EventHandler(this.resetToolStripMenuItem_Click);
+            this.resetToolStripMenuItem.Click += new System.EventHandler(this.ResetToolStripMenuItem_Click);
             //
             // exportToolStripMenuItem1
             //
             this.exportToolStripMenuItem1.Name = "exportToolStripMenuItem1";
             this.exportToolStripMenuItem1.Size = new System.Drawing.Size(208, 22);
             this.exportToolStripMenuItem1.Text = "Export...";
-            this.exportToolStripMenuItem1.Click += new System.EventHandler(this.exportToolStripMenuItem1_Click);
+            this.exportToolStripMenuItem1.Click += new System.EventHandler(this.ExportToolStripMenuItem1_Click);
             //
             // getLatestCardListToolStripMenuItem
             //
             this.getLatestCardListToolStripMenuItem.Name = "getLatestCardListToolStripMenuItem";
             this.getLatestCardListToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
             this.getLatestCardListToolStripMenuItem.Text = "&Get Latest Card name List";
-            this.getLatestCardListToolStripMenuItem.Click += new System.EventHandler(this.getLatestCardListToolStripMenuItem_Click);
+            this.getLatestCardListToolStripMenuItem.Click += new System.EventHandler(this.GetLatestCardListToolStripMenuItem_Click);
             //
             // updateCardDetailsToolStripMenuItem
             //
             this.updateCardDetailsToolStripMenuItem.Name = "updateCardDetailsToolStripMenuItem";
             this.updateCardDetailsToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
             this.updateCardDetailsToolStripMenuItem.Text = "&Update Card details";
-            this.updateCardDetailsToolStripMenuItem.Click += new System.EventHandler(this.updateCardDetailsToolStripMenuItem_Click);
+            this.updateCardDetailsToolStripMenuItem.Click += new System.EventHandler(this.UpdateCardDetailsToolStripMenuItem_Click);
             //
             // deckToolStripMenuItem
             //
@@ -325,7 +325,7 @@
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "&About";
-            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.AboutToolStripMenuItem_Click);
             //
             // openFileDialog1
             //
@@ -510,10 +510,10 @@
             this.listViewLibrary.TabIndex = 0;
             this.listViewLibrary.UseCompatibleStateImageBehavior = false;
             this.listViewLibrary.View = System.Windows.Forms.View.Details;
-            this.listViewLibrary.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewLibrary_ColumnClick);
-            this.listViewLibrary.DrawColumnHeader += new System.Windows.Forms.DrawListViewColumnHeaderEventHandler(this.listViewLibrary_DrawColumnHeader);
-            this.listViewLibrary.DrawItem += new System.Windows.Forms.DrawListViewItemEventHandler(this.listViewLibrary_DrawItem);
-            this.listViewLibrary.SelectedIndexChanged += new System.EventHandler(this.listViewLibrary_SelectedIndexChanged);
+            this.listViewLibrary.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.ListViewLibrary_ColumnClick);
+            this.listViewLibrary.DrawColumnHeader += new System.Windows.Forms.DrawListViewColumnHeaderEventHandler(this.ListViewLibrary_DrawColumnHeader);
+            this.listViewLibrary.DrawItem += new System.Windows.Forms.DrawListViewItemEventHandler(this.ListViewLibrary_DrawItem);
+            this.listViewLibrary.SelectedIndexChanged += new System.EventHandler(this.ListViewLibrary_SelectedIndexChanged);
             //
             // groupBox4
             //
@@ -535,7 +535,7 @@
             this.cardPicture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.cardPicture.TabIndex = 5;
             this.cardPicture.TabStop = false;
-            this.cardPicture.DoubleClick += new System.EventHandler(this.cardPicture_DoubleClick);
+            this.cardPicture.DoubleClick += new System.EventHandler(this.CardPicture_DoubleClick);
             //
             // textBoxCardText
             //
@@ -631,7 +631,7 @@
             this.button3.TabIndex = 1;
             this.button3.Text = "&Take Photo";
             this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.button3.Click += new System.EventHandler(this.Button3_Click);
             //
             // webCameraControl1
             //
