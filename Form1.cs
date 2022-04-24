@@ -28,8 +28,7 @@ namespace Mtg {
             Text = "MtG Card Library";
 
             openFileDialog1.InitialDirectory = _imageDir;
-            for (int i = 0; i < listViewConsole.Items.Count; i++)
-            {
+            for (int i = 0; i < listViewConsole.Items.Count; i++) {
                 var _webCamera = listViewConsole.Items[i];
                 Log(_webCamera.Text);
             }
@@ -40,8 +39,9 @@ namespace Mtg {
         }
 
         private void InitAudio() {
-            foreach (var kv in _sfxNames)
+            foreach (var kv in _sfxNames) { 
                 _sfxFiles[kv.Key] = new Mp3FileReader(kv.Value);
+            }
         }
 
         private void RefreshLibraryView() {
@@ -114,7 +114,13 @@ namespace Mtg {
             Log($"Read {num} cards from library");
 
             foreach (var card in _cards.Cards) {
+                if (card != null) {
+                    return;
+                }
                 var item = new ListViewItem(card.Title);
+                if (item.Tag != null) {
+                    return;
+                }
                 item.SubItems.Add(card.ScryfallCard.AudText);
                 item.SubItems.Add(card.ScryfallCard.oracle_text);
                 item.Tag = card.TypeId;
