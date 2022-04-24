@@ -1,4 +1,6 @@
-﻿using System;
+﻿// (C) 2022 christian@schadetsch.com
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;

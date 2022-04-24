@@ -1,4 +1,6 @@
-﻿namespace Mtg
+﻿// (C) 2022 christian@schadetsch.com
+
+namespace Mtg
 {
     partial class AboutBox1
     {

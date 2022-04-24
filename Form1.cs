@@ -15,14 +15,11 @@ using NAudio.Wave;
 
 using static Mtg.Console;
 
-namespace Mtg
-{
-    public partial class Form1 : Form
-    {
+namespace Mtg {
+    public partial class Form1 : Form {
         private DateTime _lastSfx;
 
-        public Form1()
-        {
+        public Form1() {
             InitializeComponent();
             Console.ListView = listViewConsole;
 
@@ -42,34 +39,28 @@ namespace Mtg
             RefreshLibraryView();
         }
 
-        private void InitAudio()
-        {
+        private void InitAudio() {
             foreach (var kv in _sfxNames)
                 _sfxFiles[kv.Key] = new Mp3FileReader(kv.Value);
         }
 
-        private void RefreshLibraryView()
-        {
+        private void RefreshLibraryView() {
             LoadCards();
             SortByPrice();
             SelectTop();
         }
 
-        private void SelectTop()
-        {
+        private void SelectTop() {
         }
 
-        private void SortByPrice()
-        {
+        private void SortByPrice() {
             // quick hack to sort by card cost
             ListViewLibrary_ColumnClick(this, new ColumnClickEventArgs(1));
             ListViewLibrary_ColumnClick(this, new ColumnClickEventArgs(1));
         }
 
-        private void TabControl1OnSelected(object sender, TabControlEventArgs tabControlEventArgs)
-        {
-            if (_webCamera != null)
-            {
+        private void TabControl1OnSelected(object sender, TabControlEventArgs tabControlEventArgs) {
+            if (_webCamera != null) {
                 Log("No webcam");
                 return;
             }
@@ -109,8 +100,7 @@ namespace Mtg
             }
         }
 
-        async void LoadCards()
-        {
+        async void LoadCards() {
             if (_cards == null) {
                 Log("Starting new library");
                 return;
@@ -118,8 +108,7 @@ namespace Mtg
             await LoadCardsAsync();
         }
 
-        private async Task LoadCardsAsync()
-        {
+        private async Task LoadCardsAsync() {
             var num = await _cards.Load();
             listViewLibrary.Items.Clear();
             Log($"Read {num} cards from library");
@@ -134,23 +123,21 @@ namespace Mtg
             }
         }
 
-        protected override void OnClosing(CancelEventArgs e)
-        {
+        protected override void OnClosing(CancelEventArgs e) {
             base.OnClosing(e);
             _cards.Save();
         }
 
-        private async void OpenImageToolStripMenuItem_ClickAsync(object sender, EventArgs e)
-        {
+        private async void OpenImageToolStripMenuItem_ClickAsync(object sender, EventArgs e) {
             var result = openFileDialog1.ShowDialog();
-            if (result != DialogResult.OK)
+            if (result != DialogResult.OK) {
                 return;
+            }
 
             await _cards.ProcessFileVision(openFileDialog1.FileName);
         }
 
-        private async void BatchConvertToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private async void BatchConvertToolStripMenuItem_Click(object sender, EventArgs e) {
             Log("Batch Convert Started");
 #if HARD_CODED_IMAGE_PATH
             await ProcessFiles(Directory.GetFiles(@"C:\Users\christian\Pictures\MTG\BlueWhiteDeck"));
@@ -275,13 +262,11 @@ namespace Mtg
         }
 
         private void CardPicture_DoubleClick(object sender, EventArgs e)
-        {
-            // TODO: Show all info on card with high-res image
+        { // TODO: Show all info on card with high-res image
             Warn($"Double click on {SelectedCard?.Title}");
         }
 
-        private void ListViewLibrary_ColumnClick(object sender, ColumnClickEventArgs e)
-        {
+        private void ListViewLibrary_ColumnClick(object sender, ColumnClickEventArgs e) {
             var list = listViewLibrary;
             if (e.Column != _sortColumn) {
                 _sortColumn = e.Column;
@@ -294,8 +279,7 @@ namespace Mtg
             // TODOD list.ListViewItemSorter = new ListViewUtil.Comparer(e.Column, list.Sorting);
         }
 
-        private void ListViewLibrary_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
-        {
+        private void ListViewLibrary_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e) {
             var b = e.Bounds;
             b.Height = (int) (b.Height * 0.6f);  // the title columns are too tall??!
             var color = Brushes.LightGray;
@@ -303,19 +287,15 @@ namespace Mtg
             e.DrawText();
         }
 
-        private void ListViewLibrary_DrawItem(object sender, DrawListViewItemEventArgs e)
-        {
-            e.DrawDefault = true;
+        private void ListViewLibrary_DrawItem(object sender, DrawListViewItemEventArgs e) { e.DrawDefault = true;
         }
 
-        private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void AboutToolStripMenuItem_Click(object sender, EventArgs e) {
             new AboutBox1().Show();
         }
 
         // take a snapshot of card from webcam. only really need to see the title.
-        private async void Button3_Click(object sender, EventArgs e)
-        {
+        private async void Button3_Click(object sender, EventArgs e) {
             var tmp = Path.GetTempFileName();
             webCameraControl1.GetCurrentImage().Save(tmp);
             await _cards.ProcessFileVision(tmp);
